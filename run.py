@@ -44,6 +44,15 @@ def place_booking():
     # wanting to be added to waiting list is stored as a boolean value
     waiting = True if waiting_list.lower() == 'y' else False
 
+    # store client info as a dictionary (to be stored against the booking date)
+    client_details = {
+        'name': client_name,
+        'phone': client_phone,
+        'length': length,
+        'waiting': waiting
+    }
+
+    print(client_details)
 
 def main():
     login()

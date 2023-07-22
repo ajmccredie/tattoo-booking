@@ -1,10 +1,67 @@
 
 # Write your code to expect a terminal of 80 characters wide and 24 rows high
 
-GET https://www.googleapis.com/calendar/v3/calendars/calendarId
-calendar = service.calendars().get(calendarId='primary').execute()
+# Calendar access code from Google Workspace:
+from __future__ import print_function
 
-print calendar['summary']
+import datetime
+import os.path
+
+from google.auth.transport.requests import Request
+from google.oauth2.service_account import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
+# If modifying these scopes, delete the file token.json.
+SCOPE = [
+    "https://www.googleapis.com/auth/calendar",  # Google Calendar scope
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/drive"
+]
+
+
+def obtain_calendar():
+    """Shows basic usage of the Google Calendar API.
+    Prints the start and name of the next 10 events on the user's calendar.
+    """
+    CREDS = None
+    # The file token.json stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists('eicreds.json'):
+        CREDS = Credentials.from_service_account_file('eicreds.json')
+        SCOPED_CREDS = CREDS.with_scopes(SCOPE)
+    else:
+        print("Sorry, unable to access the calendar")
+    
+    # try/except statement to access the calendar, allowing for a program break
+    # if a problem is found
+    try:
+        bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)
+
+        # Call the Calendar API
+        now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+        print('Getting the upcoming 10 events')
+        events_result = bookings_calendar.events().list(calendarId='primary').execute()
+        events = events_result.get('items', [])
+
+        if not events:
+            print('No upcoming events found.')
+            return
+
+        # Prints the start and name of the next 10 events
+        for event in events:
+            start = event['start'].get('dateTime', event['start'].get('date'))
+            print(start, event['summary'])
+
+    except HttpError as error:
+        print('An error occurred: %s' % error)
+
+
+# calendar = service.calendars().get(calendarId='primary').execute()
+
+# print calendar['summary']
 
 # ask for username and password to be entered
 def login():
@@ -87,6 +144,7 @@ def place_booking():
 
 def main():
     #login()
+    obtain_calendar()
     choose_action()
 
 main()

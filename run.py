@@ -1,6 +1,11 @@
 
 # Write your code to expect a terminal of 80 characters wide and 24 rows high
 
+GET https://www.googleapis.com/calendar/v3/calendars/calendarId
+calendar = service.calendars().get(calendarId='primary').execute()
+
+print calendar['summary']
+
 # ask for username and password to be entered
 def login():
     username = input("Please enter your username: ")

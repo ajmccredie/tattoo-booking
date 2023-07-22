@@ -6,6 +6,8 @@ from __future__ import print_function
 
 import datetime
 import os.path
+# import pandas to handle the date/time information (suggested from medium.com/swlh/convert-any-dates-in-spreadsheets-using-python)
+import pandas as pd
 
 from google.auth.transport.requests import Request
 from google.oauth2.service_account import Credentials
@@ -22,7 +24,9 @@ SCOPE = [
 
 
 def obtain_calendar():
-    """Shows basic usage of the Google Calendar API.
+    """Shows basic usage of the Google Calendar API. 
+    This code is an adapted mix of code from google Workspace (Python for developers)
+    and CI's Love-Sandwiches.
     Prints the start and name of the next 10 events on the user's calendar.
     """
     CREDS = None
@@ -57,9 +61,6 @@ def obtain_calendar():
 
     except HttpError as error:
         print('An error occurred: %s' % error)
-
-
-# calendar = service.calendars().get(calendarId='primary').execute()
 
 # print calendar['summary']
 
@@ -106,13 +107,41 @@ def phone_valid(client_phone):
             print("Unable to place booking at this time")
             choose_action()
 
+def convert_date_format(date_str):
+    """
+    Code adapted from https://medium.com/swlh/convert-any-dates-in-
+    spreadsheets-using-python-56cd7549cee7 to make the inputs compatible 
+    with the ones the calendar will expect
+    """
+    return pd.to_datetime(date_str).strftime("%Y-%m-%d")
+
+
+def convert_date_time_info():
+    """
+    Begin adaptation of data entry to convert for the calendar entry
+    """
+    start = f"{date_input} {time_input}"
+    if length == 'full':
+        duration  = 7
+        ending = time_input + duration
+    else if length == 'half':
+        duration = 4
+        ending = time_input + duration
+    else:
+        print("Sorry, duration invalid, restarting booking process...")
+        break
+    end = f"{date_input} {ending}"
+
 
 def place_booking():
     print("Does the client have a preferred artist? 1=Kev, 2=Bev, 3=no preference")
     artist = input("Artist selection: \n")
     # check validity of input and ask again if issue found
-    print("Finding the next available date...")
+    # print("Finding the next available date...")
     # need to add the code here to link to the calendar and check dates
+    date_input = input("Please enter the date for booking (YYY-MM-DD): ")
+    # set default start time to 11am
+    time_input = 11:00
     print("This date is available!")
     client_name = input("Please enter client name: \n")
     # check validity of input and ask again if issue found
@@ -122,6 +151,9 @@ def place_booking():
     phone_valid(client_phone)
     length = input("Is the tattoo a full or half day? ('full'/'half')\n")
     # check validity of input and ask again if issue found
+    convert_date_time_info(length, date_input, time_input)
+   
+    
     waiting_list = input("Would the client like to join the waiting list? (y/n)\n")
     # check validity of input and ask again if issue found
     # age check and wanting to be added to waiting list are stored as a boolean values
@@ -139,6 +171,9 @@ def place_booking():
             'length': length,
             'waiting': waiting
         }
+
+        # access the calendar and store the details
+
 
     print(client_details)
 

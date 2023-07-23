@@ -124,12 +124,12 @@ def convert_date_time_info():
     if length == 'full':
         duration  = 7
         ending = time_input + duration
-    else if length == 'half':
+    elif length == 'half':
         duration = 4
         ending = time_input + duration
     else:
         print("Sorry, duration invalid, restarting booking process...")
-        break
+        return
     end = f"{date_input} {ending}"
 
 
@@ -141,7 +141,7 @@ def place_booking():
     # need to add the code here to link to the calendar and check dates
     date_input = input("Please enter the date for booking (YYY-MM-DD): ")
     # set default start time to 11am
-    time_input = 11:00
+    time_input = '11:00'
     print("This date is available!")
     client_name = input("Please enter client name: \n")
     # check validity of input and ask again if issue found

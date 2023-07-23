@@ -95,14 +95,15 @@ def choose_action():
         print("Function under construction")
 
 def phone_valid(client_phone):
-    phone_entry = (str.isdigit, client_phone)
-    if len(phone_entry) == 10:
-        return
+    phone_entry = client_phone.replace(" ", "")
+    print(phone_entry)
+    if phone_entry.isdigit() and len(phone_entry) == 10:
+        return phone_entry
     else:
-        print("Invalid phone number. Please check and enter a 10-digit phone number.\n")
-        phone_entry = (str.isdigit, client_phone)
-        if len(phone_entry) == 10:
-            return
+        second_phone = input("Invalid phone number. Please check and enter a 10-digit phone number:\n")
+        phone_entry = second_phone.replace(" ", "")
+        if phone_entry.isdigit() and len(phone_entry) == 10:
+            return phone_entry
         else:
             print("Unable to place booking at this time")
             choose_action()
@@ -116,11 +117,11 @@ def convert_date_format(date_str):
     return pd.to_datetime(date_str).strftime("%Y-%m-%d")
 
 
-def convert_date_time_info():
+def convert_date_time_info(length, date_input, time_input):
     """
     Begin adaptation of data entry to convert for the calendar entry
     """
-    start = f"{date_input} {time_input}"
+    start = f"{date_input} {time_input}:00"
     if length == 'full':
         duration  = 7
         ending = time_input + duration
@@ -130,25 +131,27 @@ def convert_date_time_info():
     else:
         print("Sorry, duration invalid, restarting booking process...")
         return
-    end = f"{date_input} {ending}"
+    end = f"{date_input} {ending}:00"
 
 
 def place_booking():
     print("Does the client have a preferred artist? 1=Kev, 2=Bev, 3=no preference")
-    artist = input("Artist selection: \n")
+    artist_input = input("Artist selection: \n")
     # check validity of input and ask again if issue found
     # print("Finding the next available date...")
     # need to add the code here to link to the calendar and check dates
-    date_input = input("Please enter the date for booking (YYY-MM-DD): ")
+    date_input = input("Please enter the date for booking (YYYY-MM-DD): ")
     # set default start time to 11am
-    time_input = '11:00'
+    time_input = 11
     print("This date is available!")
     client_name = input("Please enter client name: \n")
     # check validity of input and ask again if issue found
     age_check = input("Please confirm client is 18 years old or older (y/n)\n")
     # check validity of input and ask again if issue found
     client_phone = input("Please enter client phone number: \n")
-    phone_valid(client_phone)
+    validated_phone = phone_valid(client_phone)
+    if validated_phone:
+        print("Valid phone number: ", validated_phone)
     length = input("Is the tattoo a full or half day? ('full'/'half')\n")
     # check validity of input and ask again if issue found
     convert_date_time_info(length, date_input, time_input)

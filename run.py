@@ -173,23 +173,23 @@ def add_to_calendar(client_details):
         # Call the Calendar API
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
         
-    event = {
-        'summary': f'Tattoo with {artist}',
-        'location': 'Eternal Ink Studios',
-        'description': f'{name}, {phone}, Waiting list? {waiting}',
-        'start': {
-            'dateTime': start,
-            'timeZone': 'Europe/London',
-        },
-        'end': {
-            'dateTime': end,
-            'timeZone': 'Europe/London'
-        },
-    }
+        event = {
+            'summary': f"Tattoo with {client_details['artist']}",
+            'location': 'Eternal Ink Studios',
+            'description': f"{client_details['name']}, {client_details['phone']}, Waiting list? {client_details['waiting']}",
+            'start': {
+                'dateTime': client_details['start'],
+                'timeZone': 'Europe/London',
+            },
+            'end': {
+                'dateTime': client_details['end'],
+                'timeZone': 'Europe/London'
+            },
+        }
 
-    # insert the event into the calendar
-    event = CALENDAR_API.events().instert(calendarId='primary', body=event).execute()
-    print('Event created: %s' % event.get('htmlLink'))
+        # insert the event into the calendar
+        event = bookings_calendar.events().insert(calendarId='primary', body=event).execute()
+        print('Event created: %s' % event.get('htmlLink'))
     except HttpError as error:
         print('An error occurred: %s' % error)
 

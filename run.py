@@ -186,7 +186,7 @@ def place_booking():
     else:
         # store client info as a dictionary (to be stored against the booking date)
         client_details = {
-            'artist': artist_input,
+            'artist': artist,
             'name': client_name,
             'phone': client_phone,
             'details': start,

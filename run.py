@@ -91,10 +91,15 @@ def choose_action():
     choice = input("Selection: \n")
     if choice == "1":
         place_booking()
+    elif choice == "3":
+        cancel_booking()
     else:
         print("Function under construction")
 
 def ask_artist_preference():
+    """
+    Determine, vadildate and return the preferred artist
+    """
     while True:
         print("Does the client have a preferred artist? 1=Kev, 2=Bev, 3=no preference")
         artist_input = input("Artist selection: \n")
@@ -243,6 +248,17 @@ def place_booking():
         add_to_calendar(client_details)
 
     print(client_details)
+
+def cancel_booking():
+    print("Please provide answers to the following questions to find the booking: ")
+    artist = ask_artist_preference()
+    print(artist)
+    summary = f"Tattoo with {artist}"
+    client_name = input("Please provide the name of the person booked in: \n")
+    description = f"{client_name}"
+    date_search = input("Please enter the date of the booking (YYYY-MM-DD): \n")
+    # search function for appropriate events
+    
 
 def main():
     #login()

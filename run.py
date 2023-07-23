@@ -136,9 +136,13 @@ def convert_date_time_info(length, date_input, time_input):
 
 
 def place_booking():
-    print("Does the client have a preferred artist? 1=Kev, 2=Bev, 3=no preference")
-    artist_input = input("Artist selection: \n")
-    # check validity of input and ask again if issue found
+    while True:
+        print("Does the client have a preferred artist? 1=Kev, 2=Bev, 3=no preference")
+        artist_input = input("Artist selection: \n")
+        # check validity of input and ask again if issue found
+        if artist_input not in ['1', '2', '3']:
+            print("Invalid input. Please enter 1, 2 or 3.")
+            continue
     # print("Finding the next available date...")
     # need to add the code here to link to the calendar and check dates
     date_input = input("Please enter the date for booking (YYYY-MM-DD): ")

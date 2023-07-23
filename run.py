@@ -172,17 +172,19 @@ def add_to_calendar(client_details):
 
         # Call the Calendar API
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-        
+        start_time = datetime.datetime.strptime(client_details['start'], '%Y-%m-%d %H:%M').isoformat()
+        end_time = datetime.datetime.strptime(client_details['end'], '%Y-%m-%d %H:%M').isoformat()
+
         event = {
             'summary': f"Tattoo with {client_details['artist']}",
             'location': 'Eternal Ink Studios',
             'description': f"{client_details['name']}, {client_details['phone']}, Waiting list? {client_details['waiting']}",
             'start': {
-                'dateTime': client_details['start'],
+                'dateTime': start_time,
                 'timeZone': 'Europe/London',
             },
             'end': {
-                'dateTime': client_details['end'],
+                'dateTime': end_time,
                 'timeZone': 'Europe/London'
             },
         }
@@ -245,6 +247,6 @@ def place_booking():
 def main():
     #login()
     obtain_calendar()
-    choose_action()
+    #choose_action()
 
 main()

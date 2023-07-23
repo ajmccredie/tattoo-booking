@@ -156,8 +156,8 @@ def place_booking():
     length = input("Is the tattoo a full or half day? ('full'/'half')\n")
     # check validity of input and ask again if issue found
     date_and_time = convert_date_time_info(length, date_input, time_input)
-    print(date_and_time)
-   
+    start = date_and_time[0]
+    end = date_and_time[1]
     
     waiting_list = input("Would the client like to join the waiting list? (y/n)\n")
     # check validity of input and ask again if issue found
@@ -171,9 +171,10 @@ def place_booking():
     else:
         # store client info as a dictionary (to be stored against the booking date)
         client_details = {
+            'artist': artist_input,
             'name': client_name,
             'phone': client_phone,
-            'details': date_and_time,
+            'details': start,
             'length': length,
             'waiting': waiting
         }

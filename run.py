@@ -94,6 +94,22 @@ def choose_action():
     else:
         print("Function under construction")
 
+def ask_artist_preference():
+    while True:
+        print("Does the client have a preferred artist? 1=Kev, 2=Bev, 3=no preference")
+        artist_input = input("Artist selection: \n")
+        # check validity of input and ask again if issue found
+        if artist_input in ['1', '2', '3']:
+            if artist_input == '1':
+                return "Kev"
+            elif artist_input == '2':
+                return "Bev"
+            else:
+                return "No preference"
+        else:
+            print("Invalid input. Please enter 1, 2 or 3.")
+            continue
+
 def phone_valid(client_phone):
     phone_entry = client_phone.replace(" ", "")
     print(phone_entry)
@@ -136,13 +152,8 @@ def convert_date_time_info(length, date_input, time_input):
 
 
 def place_booking():
-    while True:
-        print("Does the client have a preferred artist? 1=Kev, 2=Bev, 3=no preference")
-        artist_input = input("Artist selection: \n")
-        # check validity of input and ask again if issue found
-        if artist_input not in ['1', '2', '3']:
-            print("Invalid input. Please enter 1, 2 or 3.")
-            continue
+    artist = ask_artist_preference()
+    print(artist)
     # print("Finding the next available date...")
     # need to add the code here to link to the calendar and check dates
     date_input = input("Please enter the date for booking (YYYY-MM-DD): ")

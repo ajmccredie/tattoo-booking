@@ -151,6 +151,47 @@ def convert_date_time_info(length, date_input, time_input):
     end = f"{date_input} {ending}:00"
     return (start, end)
 
+def add_to_calendar(client_details):
+    """
+    Brings in the access code from obtain_calendar and allows an event to be written
+    """
+    CREDS = None
+    # The file token.json stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists('eicreds.json'):
+        CREDS = Credentials.from_service_account_file('eicreds.json')
+        SCOPED_CREDS = CREDS.with_scopes(SCOPE)
+    else:
+        print("Sorry, unable to access the calendar")
+    
+    # try/except statement to access the calendar, allowing for a program break
+    # if a problem is found
+    try:
+        bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)
+
+        # Call the Calendar API
+        now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+        
+    event = {
+        'summary': f'Tattoo with {artist}',
+        'location': 'Eternal Ink Studios',
+        'description': f'{name}, {phone}, Waiting list? {waiting}',
+        'start': {
+            'dateTime': start,
+            'timeZone': 'Europe/London',
+        },
+        'end': {
+            'dateTime': end,
+            'timeZone': 'Europe/London'
+        },
+    }
+
+    # insert the event into the calendar
+    event = CALENDAR_API.events().instert(calendarId='primary', body=event).execute()
+    print('Event created: %s' % event.get('htmlLink'))
+    except HttpError as error:
+        print('An error occurred: %s' % error)
 
 def place_booking():
     artist = ask_artist_preference()
@@ -190,13 +231,14 @@ def place_booking():
             'artist': artist,
             'name': client_name,
             'phone': client_phone,
-            'details': start,
+            'start': start,
+            'end': end,
             'length': length,
             'waiting': waiting
         }
 
         # access the calendar and store the details
-
+        add_to_calendar(client_details)
 
     print(client_details)
 

@@ -121,9 +121,6 @@ def phone_valid(client_phone):
         else:
             print("Invalid phone number. Please check and enter a 10-digit phone number:\n")
             client_phone = input("Please entter client phone number: \n")
-            #phone_entry = second_phone.replace(" ", "")
-            #if phone_entry.isdigit() and len(phone_entry) == 10:
-            #    return phone_entry
     else:
         print("Unable to place booking at this time")
         choose_action()

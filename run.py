@@ -257,12 +257,20 @@ def cancel_booking():
     client_name = input("Please provide the name of the person booked in: \n")
     description = f"{client_name}"
     date_search = input("Please enter the date of the booking (YYYY-MM-DD): \n")
-    # search function for appropriate events
-    
+    # search function for appropriate events - use of q query and search parameters adapted from 
+    # https://www.jayasekara.blog/2021/07/how-to-search-google-calendar-events-using-python.html
+    events = service.calendarList().list(
+        calendar_id = calendarlist['items'][0]['id']
+        query = f"{summary} {description}"
+    ).execute()
+    print(events)
+
+
+
 
 def main():
     #login()
-    obtain_calendar()
-    #choose_action()
+    #obtain_calendar()
+    choose_action()
 
 main()

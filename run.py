@@ -259,13 +259,20 @@ def cancel_booking():
     date_search = input("Please enter the date of the booking (YYYY-MM-DD): \n")
     # search function for appropriate events - use of q query and search parameters adapted from 
     # https://www.jayasekara.blog/2021/07/how-to-search-google-calendar-events-using-python.html
-    events = service.calendarList().list(
-        calendar_id = calendarlist['items'][0]['id']
-        query = f"{summary} {description}"
-    ).execute()
-    print(events)
-
-
+    if os.path.exists('eicreds.json'):
+        CREDS = Credentials.from_service_account_file('eicreds.json')
+        SCOPED_CREDS = CREDS.with_scopes(SCOPE)
+    else:
+        print("Sorry, unable to access the calendar")
+    
+    try:
+        bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)
+        events = bookings_calendar.calendarList().list(
+            query = f"{summary} {description}",
+        ).execute()
+        print(events)
+    except HttpError as error:
+        print('An error occurred: %s' % error)
 
 
 def main():

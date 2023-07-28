@@ -282,7 +282,9 @@ def cancel_booking():
                 matched_events.append(event)
                 start = event['start'].get('dateTime', event['start'].get('date'))
                 print(f"The following booking(s) matching your description has been found: ", start,":", event['summary'],".", event['description'],".")
-    
+            else:
+                print("No matching bookings found, please check your search criteria.")
+
     except HttpError as error:
         print('An error occurred: %s' % error)
 

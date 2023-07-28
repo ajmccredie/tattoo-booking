@@ -248,10 +248,22 @@ def place_booking():
             'waiting': waiting
         }
 
-        # access the calendar and store the details
-        add_to_calendar(client_details)
+        print(f"Please check through the information provided: ", client_details)
+        confirm_booking = input("Are all the details provided correct? y/n\n")
+        if confirm_booking.lower() == 'y':
+            # access the calendar and store the details
+            add_to_calendar(client_details)
+            book_another = input("Client booking confirmed.\n Do you wish to continue using the system? ('y'/'n')\n")
+            if book_another.lower() == 'y':
+                choose_action()
+            else:
+                return
+        else:
+            print("Please restart the booking procedure")
+            choose_action()
+            return
 
-    print(client_details)
+
 
 def cancel_booking():
     print("Please provide answers to the following questions to find the booking: ")
@@ -286,11 +298,14 @@ def cancel_booking():
                 if confirm_action.lower() == 'n':
                     print("Booking deletion cancelled")
                     exit()
-                else:
+                elif confirm_action.lower() == 'y':
                     for event in matched_events:
                         event_identifier = event['id']
                         bookings_calendar.events().delete(calendarId='primary', eventId=event_identifier).execute()
                         print("Booking deleted.")
+                else:
+                    print("Invalid command, unable to complete booking deletion.\n")
+                    choose_action()
             else:
                 print("No matching bookings found, please check your search criteria.")
 
@@ -301,8 +316,7 @@ def cancel_booking():
 def main():
     #login()
     obtain_calendar()
-    #choose_action()
+    choose_action()
 
-    
-
+# run the main programme on launch
 main()

@@ -57,7 +57,7 @@ def obtain_calendar():
         # Prints the start and name of the next 10 events
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
-            print(start, event['summary'])
+            print(start,":" event['summary'],"." event['description']".")
 
     except HttpError as error:
         print('An error occurred: %s' % error)
@@ -267,9 +267,10 @@ def cancel_booking():
     
     try:
         bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)
-        events = bookings_calendar.calendarList().list(
-            query = f"{summary} {description}",
-        ).execute()
+        #events = bookings_calendar.calendarList().list().execute()
+        #print(events)
+        events_result = bookings_calendar.events().list(calendarId='primary').execute()
+        events = events_result.get('items', [])
         print(events)
     except HttpError as error:
         print('An error occurred: %s' % error)
@@ -277,7 +278,9 @@ def cancel_booking():
 
 def main():
     #login()
-    #obtain_calendar()
+    obtain_calendar()
     choose_action()
+
+    
 
 main()

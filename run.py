@@ -57,7 +57,7 @@ def obtain_calendar():
         # Prints the start and name of the next 10 events
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
-            print(start,":" event['summary'],"." event['description']".")
+            print(start,":", event['summary'],".", event['description'],".")
 
     except HttpError as error:
         print('An error occurred: %s' % error)
@@ -93,8 +93,12 @@ def choose_action():
         place_booking()
     elif choice == "3":
         cancel_booking()
-    else:
+    elif choice == "2":
         print("Function under construction")
+    elif choice == "4":
+        print("Function under construction")
+    else:
+        print("Invalid function choice, terminating programme.")
 
 def ask_artist_preference():
     """
@@ -271,7 +275,14 @@ def cancel_booking():
         #print(events)
         events_result = bookings_calendar.events().list(calendarId='primary').execute()
         events = events_result.get('items', [])
-        print(events)
+        
+        matched_events = []
+        for event in events:
+            if summary in event.get('summary', ''):
+                matched_events.append(event)
+                start = event['start'].get('dateTime', event['start'].get('date'))
+                print(f"The following booking(s) matching your description has been found: ", start,":", event['summary'],".", event['description'],".")
+    
     except HttpError as error:
         print('An error occurred: %s' % error)
 

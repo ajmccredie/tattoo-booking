@@ -215,6 +215,7 @@ def add_to_calendar(client_details):
         # insert the event into the calendar
         event = bookings_calendar.events().insert(calendarId='primary', body=event).execute()
         print('Event created: %s' % event.get('htmlLink'))
+        
     except HttpError as error:
         print('An error occurred: %s' % error)
 
@@ -267,7 +268,7 @@ def place_booking():
         if confirm_booking.lower() == 'y':
             # access the calendar and store the details
             add_to_calendar(client_details)
-            book_another = input("Client booking confirmed.\n Do you wish to continue using the system? ('y'/'n')\n")
+            book_another = input("Client booking confirmed.\n Do you wish to continue using the system? y/n\n")
             if book_another.lower() == 'y':
                 choose_action()
             else:

@@ -59,10 +59,24 @@ def obtain_calendar():
             start = event['start'].get('dateTime', event['start'].get('date'))
             print(start,":", event['summary'],".", event['description'],".")
 
+            search_calendar = input("Do you wish to search the calendar for a particular booking? y/n\n")
+            if search_calendar.lower() == 'y':
+                search_calendar()
+            elif search_calendar.lower() == 'n':
+                print("Returning to booking actions...")
+                choose_action()
+                return
+            else:
+                print("Invalid input. Retruning to booking actions...")
+                choose_action()
+                return
     except HttpError as error:
         print('An error occurred: %s' % error)
 
-# print calendar['summary']
+def search_calendar():
+    print("Welcome to the calendar search. Please choose your search parameters:\n")
+    return
+
 
 # ask for username and password to be entered
 def login():
@@ -94,7 +108,7 @@ def choose_action():
     elif choice == "3":
         cancel_booking()
     elif choice == "2":
-        print("Function under construction")
+        obtain_calendar()
     elif choice == "4":
         print("Function under construction")
     else:
@@ -315,7 +329,7 @@ def cancel_booking():
 
 def main():
     #login()
-    obtain_calendar()
+    #obtain_calendar()
     choose_action()
 
 # run the main programme on launch

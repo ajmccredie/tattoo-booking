@@ -270,18 +270,27 @@ def cancel_booking():
         print("Sorry, unable to access the calendar")
     
     try:
+        # access the calendar in order to search
         bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)
-        #events = bookings_calendar.calendarList().list().execute()
-        #print(events)
         events_result = bookings_calendar.events().list(calendarId='primary').execute()
         events = events_result.get('items', [])
         
+        # filter all the results obtained to just the ones matching the search criteria
         matched_events = []
         for event in events:
             if summary in event.get('summary', ''):
                 matched_events.append(event)
                 start = event['start'].get('dateTime', event['start'].get('date'))
                 print(f"The following booking(s) matching your description has been found: ", start,":", event['summary'],".", event['description'],".")
+                confirm_action = input("Do you wish to delete the booking(s)? ('y'/'n')\n")
+                if confirm_action.lower() == 'n':
+                    print("Booking deletion cancelled")
+                    exit()
+                else:
+                    for event in matched_events:
+                        event_identifier = event['id']
+                        bookings_calendar.events().delete(calendarId='primary', eventId=event_identifier).execute()
+                        print("Booking deleted.")
             else:
                 print("No matching bookings found, please check your search criteria.")
 
@@ -292,7 +301,7 @@ def cancel_booking():
 def main():
     #login()
     obtain_calendar()
-    choose_action()
+    #choose_action()
 
     
 

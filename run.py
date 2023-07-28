@@ -101,7 +101,8 @@ def choose_action():
     print("1. Place a booking")
     print("2. Find a booking")
     print("3. Cancel a booking")
-    print("4. Enter a staff working pattern\n")
+    print("4. Enter a staff working pattern")
+    print("5. Exit the system and logout\n")
     choice = input("Selection: \n")
     if choice == "1":
         place_booking()
@@ -111,6 +112,12 @@ def choose_action():
         obtain_calendar()
     elif choice == "4":
         print("Function under construction")
+    elif choice == '5'
+        confirm_logout = input("Are you sure you wish to exit the system? y/n\n")
+        if confirm_logout.lower() == 'y':
+            exit()
+        else:
+            choose_action()
     else:
         print("Invalid function choice, terminating programme.")
 
@@ -215,7 +222,7 @@ def add_to_calendar(client_details):
         # insert the event into the calendar
         event = bookings_calendar.events().insert(calendarId='primary', body=event).execute()
         print('Event created: %s' % event.get('htmlLink'))
-        
+
     except HttpError as error:
         print('An error occurred: %s' % error)
 

@@ -61,19 +61,19 @@ def obtain_calendar():
 
             search_calendar = input("Do you wish to search the calendar for a particular booking? y/n\n")
             if search_calendar.lower() == 'y':
-                search_calendar()
+                calendar_search()
             elif search_calendar.lower() == 'n':
                 print("Returning to booking actions...")
                 choose_action()
                 return
             else:
-                print("Invalid input. Retruning to booking actions...")
+                print("Invalid input. Returning to booking actions...")
                 choose_action()
                 return
     except HttpError as error:
         print('An error occurred: %s' % error)
 
-def search_calendar():
+def calendar_search():
     print("Welcome to the calendar search. Please choose your search parameters:\n")
     return
 
@@ -112,7 +112,7 @@ def choose_action():
         obtain_calendar()
     elif choice == "4":
         print("Function under construction")
-    elif choice == '5'
+    elif choice == '5':
         confirm_logout = input("Are you sure you wish to exit the system? y/n\n")
         if confirm_logout.lower() == 'y':
             exit()

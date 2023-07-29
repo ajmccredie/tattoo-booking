@@ -127,7 +127,7 @@ def ask_artist_preference():
     """
     while True:
         print("Does the client have a preferred artist? 1=Kev, 2=Bev, 3=no preference")
-        artist_input = input("Artist selection: \n")
+        artist_input = input("Artist selection: \n").strip()
         # check validity of input and ask again if issue found
         if artist_input in ['1', '2', '3']:
             if artist_input == '1':
@@ -138,7 +138,7 @@ def ask_artist_preference():
                 return "No preference"
         else:
             print("Invalid input. Please enter 1, 2 or 3.")
-            continue
+
 
 def phone_valid(client_phone):
     """
@@ -163,6 +163,17 @@ def convert_date_format(date_str):
     """
     return pd.to_datetime(date_str).strftime("%Y-%m-%d")
 
+def date_valid(date_str):
+    """
+    Check whether the user input of date meets the requirements stipulated
+    """
+    # Use a try/except statement in order to quickly sort valid inputs
+    try:
+        datetime.datetime.strptime(date_str, '%Y-%m-%d')
+        return True
+    except ValueError:
+        return False
+
 
 def convert_date_time_info(length, date_input, time_input):
     """
@@ -177,6 +188,7 @@ def convert_date_time_info(length, date_input, time_input):
         ending = time_input + duration
     else:
         print("Sorry, duration invalid, restarting booking process...")
+        choose_action()
         return
     end = f"{date_input} {ending}:00"
     return (start, end)
@@ -229,12 +241,20 @@ def add_to_calendar(client_details):
 def place_booking():
     artist = ask_artist_preference()
     print(artist)
-    # print("Finding the next available date...")
-    # need to add the code here to link to the calendar and check dates
-    date_input = input("Please enter the date for booking (YYYY-MM-DD): ")
+ 
+    date_input = input("Please enter the date for booking (YYYY-MM-DD): \n")
+    # check validity of date input
+    while not date_valid(date_input):
+        print("Invalid date format. Please enter a valid date (YYYY-MM-DD).")
+        date_input = input("Please enter the date for booking (YYYY-MM-DD): \n")
     # set default start time to 11am
     time_input = 11
+    # print("Finding the next available date...")
+    # need to add the code here to link to the calendar and check dates
     print("This date is available!")
+    # or if the date is unavailable, the code needs to look for the next 
+    # available date if requested.
+    
     client_name = input("Please enter client name: \n")
     # check validity of input and ask again if issue found
     age_check = input("Please confirm client is 18 years old or older (y/n)\n")

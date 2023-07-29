@@ -342,15 +342,18 @@ def cancel_booking():
                 matched_events.append(event)
                 start = event['start'].get('dateTime', event['start'].get('date'))
                 print(f"The following booking(s) matching your description has been found: ", start,":", event['summary'],".", event['description'],".")
-                confirm_action = input("Do you wish to delete the booking(s)? ('y'/'n')\n")
+                confirm_action = input("Do you wish to delete the booking(s)? (y/n)\n")
                 if confirm_action.lower() == 'n':
-                    print("Booking deletion cancelled")
-                    exit()
+                    print("Booking deletion cancelled, returning to main menu.\n")
+                    choose_action()
                 elif confirm_action.lower() == 'y':
                     for event in matched_events:
                         event_identifier = event['id']
                         bookings_calendar.events().delete(calendarId='primary', eventId=event_identifier).execute()
                         print("Booking deleted.")
+                        # question user here as to whether they want to see the next name on the waiting list?
+                        print("Returning to main menu....\n")
+                        choose_action()
                 else:
                     print("Invalid command, unable to complete booking deletion.\n")
                     choose_action()

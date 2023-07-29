@@ -47,7 +47,7 @@ def obtain_calendar():
         # Call the Calendar API
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
         print('Getting the upcoming 10 events')
-        events_result = bookings_calendar.events().list(calendarId='primary').execute()
+        events_result = bookings_calendar.events().list(calendarId='primary', timeMin=now, maxResults=10, singleEvents=True).execute()
         events = events_result.get('items', [])
 
         if not events:
@@ -63,11 +63,11 @@ def obtain_calendar():
             if search_calendar.lower() == 'y':
                 calendar_search()
             elif search_calendar.lower() == 'n':
-                print("Returning to booking actions...")
+                print("Returning to booking actions...\n")
                 choose_action()
                 return
             else:
-                print("Invalid input. Returning to booking actions...")
+                print("Invalid input. Returning to booking actions...\n")
                 choose_action()
                 return
     except HttpError as error:
@@ -75,6 +75,12 @@ def obtain_calendar():
 
 def calendar_search():
     print("Welcome to the calendar search. Please choose your search parameters:\n")
+    # check date
+
+    # check name
+
+    # check artist
+
     return
 
 

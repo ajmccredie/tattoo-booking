@@ -57,30 +57,62 @@ def obtain_calendar():
         # Prints the start and name of the next 10 events
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
-            print(start,":", event['summary'],".", event['description'],".")
+            print(start, ":", event['summary'], ".", event['description'], ".")
 
-            search_calendar = input("Do you wish to search the calendar for a particular booking? y/n\n")
-            if search_calendar.lower() == 'y':
-                calendar_search()
-            elif search_calendar.lower() == 'n':
-                print("Returning to booking actions...\n")
-                choose_action()
-                return
-            else:
-                print("Invalid input. Returning to booking actions...\n")
-                choose_action()
-                return
+        search_calendar = input("Do you wish to search the calendar for a particular booking? y/n\n")
+        if search_calendar.lower() == 'y':
+            calendar_search()
+        elif search_calendar.lower() == 'n':
+            print("Returning to booking actions...\n")
+            choose_action()
+            return
+        else:
+            print("Invalid input. Returning to booking actions...\n")
+            choose_action()
+            return
     except HttpError as error:
         print('An error occurred: %s' % error)
 
 def calendar_search():
+    """
+    Accesses all of the information available in the calendar in order to allow searches
+    """
     print("Welcome to the calendar search. Please choose your search parameters:\n")
-    # check date
+    CREDS = None
+    # The file token.json stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists('eicreds.json'):
+        CREDS = Credentials.from_service_account_file('eicreds.json')
+        SCOPED_CREDS = CREDS.with_scopes(SCOPE)
+    else:
+        print("Sorry, unable to access the calendar")
+    
+    # try/except statement to access the calendar, allowing for a program break
+    # if a problem is found
+    try:
+        bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)
 
-    # check name
+        # Call the Calendar API
+        now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+        events_result = bookings_calendar.events().list(calendarId='primary', timeMin=now, singleEvents=True).execute()
+        events = events_result.get('items', [])
 
-    # check artist
+        if not events:
+            print('No upcoming events found.')
+            return
 
+        # Determines the start times of all the events
+        for event in events:
+            start = event['start'].get('dateTime', event['start'].get('date'))
+        # check date
+
+
+        # check name
+
+        # check artist
+    except HttpError as error:
+            print('An error occurred: %s' % error)
     return
 
 
@@ -132,7 +164,7 @@ def ask_artist_preference():
     Determine, vadildate and return the preferred artist
     """
     while True:
-        print("Does the client have a preferred artist? 1=Kev, 2=Bev, 3=no preference")
+        print("Which artist? 1=Kev, 2=Bev, 3=no preference")
         artist_input = input("Artist selection: \n").strip()
         # check validity of input and ask again if issue found
         if artist_input in ['1', '2', '3']:
@@ -304,6 +336,7 @@ def place_booking():
             book_another = input("Client booking confirmed.\n Do you wish to continue using the system? y/n\n")
             if book_another.lower() == 'y':
                 choose_action()
+                print("Returning to the main menu\n")
             else:
                 return
         else:

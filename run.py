@@ -77,7 +77,7 @@ def calendar_search():
     """
     Accesses all of the information available in the calendar in order to allow searches
     """
-    print("Welcome to the calendar search. Please choose your search parameters:\n")
+
     CREDS = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -102,18 +102,61 @@ def calendar_search():
             print('No upcoming events found.')
             return
 
-        # Determines the start times of all the events
-        for event in events:
-            start = event['start'].get('dateTime', event['start'].get('date'))
-        # check date
-
-
-        # check name
-
-        # check artist
+        print("Future events found. Please choose how you wish to search the calendar: ")
+        print("a. By client name")
+        print("b. By artist")
+        print("c. By date")
+        print("d. Return to main menu")
+        choice = input("Selection: \n").strip()
+        if choice.lower() == "a":
+            name_matches = search_by_name(events)
+            print("The search found the following results...")
+            for name_match in name_matches:
+                start = name_match['start'].get('dateTime', name_match['start'].get('date'))
+                print(start, ":", name_match['summary'], ".", name_match['description'], ".")
+            choose_action()
+        elif choice.lower() == "b":
+            search_by_artist(events)
+        elif choice.lower() == "c":
+            search_by_date(events)
+        elif choice.lower() == "d":
+            choose_action()
+        else:
+            print("Invalid input. Please try again.")
+            calendar_search(events)
     except HttpError as error:
             print('An error occurred: %s' % error)
+    return        
+
+
+def search_by_name(events):
+    """
+    User input of name used to filter search results
+    """
+    search_name = input("Please enter the client name:\n")
+    matched_by_name = []
+    for event in events:
+        if event.get('summary', '').lower == search_name.lower():
+            matched_by_name.append(event)
+        print(matched_by_name)
+        return matched_by_name
+
+def search_by_date(events):
+    """
+    User input of date used to filter search results
+    """
+    #search_date = 
+        #    start = event['start'].get('dateTime', event['start'].get('date'))
+        # check date
     return
+
+def search_by_artist(events):
+    """
+    User input of artist used to filter search results
+    """
+    artist_bookings = []
+    #if...
+    return artist_bookings
 
 
 # ask for username and password to be entered
@@ -277,9 +320,12 @@ def add_to_calendar(client_details):
         print('An error occurred: %s' % error)
 
 def place_booking():
+    """
+    A series of user input questions, validated and used to produce a client booking
+    """
+    # choose artist (this comes first because it will allow the calendar to be searched more effectively)
     artist = ask_artist_preference()
-    print(artist)
- 
+    # check the date the user wants
     date_input = input("Please enter the date for booking (YYYY-MM-DD): \n")
     # check validity of date input
     while not date_valid(date_input):
@@ -287,12 +333,14 @@ def place_booking():
         date_input = input("Please enter the date for booking (YYYY-MM-DD): \n")
     # set default start time to 11am
     time_input = 11
+    
     # print("Finding the next available date...")
     # need to add the code here to link to the calendar and check dates
     print("This date is available!")
     # or if the date is unavailable, the code needs to look for the next 
     # available date if requested.
     
+    # once a date for the booking is found, the rest of the details are obtained
     client_name = input("Please enter client name: \n")
     # check validity of input and ask again if issue found
     age_check = input("Please confirm client is 18 years old or older (y/n)\n")
@@ -345,8 +393,10 @@ def place_booking():
             return
 
 
-
 def cancel_booking():
+    """
+    A series of validated user inputs to determine, check and delete the unwanted booking
+    """
     print("Please provide answers to the following questions to find the booking: ")
     artist = ask_artist_preference()
     print(artist)

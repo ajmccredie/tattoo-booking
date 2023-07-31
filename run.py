@@ -114,11 +114,18 @@ def calendar_search():
             for name_match in name_matches:
                 start = name_match['start'].get('dateTime', name_match['start'].get('date'))
                 print(start, ":", name_match['summary'], ".", name_match['description'], ".")
+            print("Returning to bookings menu...\n")
             choose_action()
         elif choice.lower() == "b":
             search_by_artist(events)
         elif choice.lower() == "c":
-            search_by_date(events)
+            date_matches = search_by_date(events)
+            print("The search found the following results...")
+            for date_match in date_matches:
+                start = date_match['start'].get('dateTime', date_match['start'].get('date'))
+                print(start, ":", date_match['summary'], ".", date_match['description'], ".")
+            print("Returning to bookings menu...\n")
+            choose_action()
         elif choice.lower() == "d":
             choose_action()
         else:
@@ -152,21 +159,30 @@ def search_by_date(events):
     while not date_valid(search_date_input):
         print("Invalid date format. Please enter a valid date (YYYY-MM-DD).")
         search_date_input = input("Please enter the date for booking (YYYY-MM-DD): \n")
+    matched_by_date = []
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         date_string = start.split('T')
         date = date_string[0]
-        print(date)
         # check date
-    return
+        if date == search_date_input:
+            matched_by_date.append(event)
+    return matched_by_date
 
 def search_by_artist(events):
     """
     User input of artist used to filter search results
     """
-    artist_bookings = []
-    #if...
-    return artist_bookings
+    search_artist = input("Please enter the artist name (Kev/Bev):\n")
+    matched_by_artist = []
+    for event in events:
+        summaries = event.get('summary', '')
+        summaries_split = summaries.split(' ')
+        artist = summaries_split[2]
+        print(artist)
+        if artist.lower() == search_artist.lower():
+            matched_by_artist.append(event)
+    return matched_by_artist
 
 
 # ask for username and password to be entered
@@ -188,6 +204,7 @@ def login():
             # this will need changing to a while loop at some point    
 
 def choose_action():
+    print("---------------------------------------------------")
     print("Please select from the following options by typing the number:")
     print("1. Place a booking")
     print("2. Find a booking")
@@ -196,10 +213,13 @@ def choose_action():
     print("5. Exit the system and logout\n")
     choice = input("Selection: \n")
     if choice == "1":
+        print("---------------------------------------------------")
         place_booking()
     elif choice == "3":
+        print("---------------------------------------------------")
         cancel_booking()
     elif choice == "2":
+        print("---------------------------------------------------")
         obtain_calendar()
     elif choice == "4":
         print("Function under construction")

@@ -152,9 +152,11 @@ def search_by_date(events):
     while not date_valid(search_date_input):
         print("Invalid date format. Please enter a valid date (YYYY-MM-DD).")
         search_date_input = input("Please enter the date for booking (YYYY-MM-DD): \n")
-        for event in events:
-            start = event['start'].get('dateTime', event['start'].get('date'))
-            print(start)
+    for event in events:
+        start = event['start'].get('dateTime', event['start'].get('date'))
+        date_string = start.split('T')
+        date = date_string[0]
+        print(date)
         # check date
     return
 

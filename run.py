@@ -136,10 +136,12 @@ def search_by_name(events):
     search_name = input("Please enter the client name:\n")
     matched_by_name = []
     for event in events:
-        if event.get('summary', '').lower == search_name.lower():
-            matched_by_name.append(event)
-        print(matched_by_name)
-        return matched_by_name
+        name = event.get('description', '')
+        print(name)
+        #if event.get('description', '').lower == search_name.lower():
+        #    matched_by_name.append(event)
+        #print(matched_by_name)
+        #return matched_by_name
 
 def search_by_date(events):
     """

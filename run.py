@@ -147,7 +147,8 @@ def search_by_date(events):
     """
     User input of date used to filter search results
     """
-    #search_date = 
+    search_date_input = input("Please enter the date you wish to search")
+
         #    start = event['start'].get('dateTime', event['start'].get('date'))
         # check date
     return
@@ -238,13 +239,6 @@ def phone_valid(client_phone):
         print("Unable to place booking at this time")
         choose_action()
 
-def convert_date_format(date_str):
-    """
-    Code adapted from https://medium.com/swlh/convert-any-dates-in-
-    spreadsheets-using-python-56cd7549cee7 to make the inputs compatible 
-    with the ones the calendar will expect
-    """
-    return pd.to_datetime(date_str).strftime("%Y-%m-%d")
 
 def date_valid(date_str):
     """

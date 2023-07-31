@@ -147,9 +147,14 @@ def search_by_date(events):
     """
     User input of date used to filter search results
     """
-    search_date_input = input("Please enter the date you wish to search")
-
-        #    start = event['start'].get('dateTime', event['start'].get('date'))
+    search_date_input = input("Please enter the date you wish to search(YYYY-MM-DD): \n")
+    # check validity of date input
+    while not date_valid(search_date_input):
+        print("Invalid date format. Please enter a valid date (YYYY-MM-DD).")
+        search_date_input = input("Please enter the date for booking (YYYY-MM-DD): \n")
+        for event in events:
+            start = event['start'].get('dateTime', event['start'].get('date'))
+            print(start)
         # check date
     return
 

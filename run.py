@@ -117,7 +117,12 @@ def calendar_search():
             print("Returning to bookings menu...\n")
             choose_action()
         elif choice.lower() == "b":
-            search_by_artist(events)
+            artist_matches = search_by_artist(events)
+            print("The search found the following results...")
+            for artist_match in artist_matches:
+                start = artist_match['start'].get('dateTime', artist_match['start'].get('date'))
+                print(start, ":", artist_match['summary'], ".", artist_match['description'], ".")
+            print("Returning to bookings menu...\n")
         elif choice.lower() == "c":
             date_matches = search_by_date(events)
             print("The search found the following results...")
@@ -179,7 +184,6 @@ def search_by_artist(events):
         summaries = event.get('summary', '')
         summaries_split = summaries.split(' ')
         artist = summaries_split[2]
-        print(artist)
         if artist.lower() == search_artist.lower():
             matched_by_artist.append(event)
     return matched_by_artist

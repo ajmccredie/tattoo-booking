@@ -123,6 +123,7 @@ def calendar_search():
                 start = artist_match['start'].get('dateTime', artist_match['start'].get('date'))
                 print(start, ":", artist_match['summary'], ".", artist_match['description'], ".")
             print("Returning to bookings menu...\n")
+            choose_action()
         elif choice.lower() == "c":
             date_matches = search_by_date(events)
             print("The search found the following results...")
@@ -208,7 +209,7 @@ def login():
             # this will need changing to a while loop at some point    
 
 def choose_action():
-    print("---------------------------------------------------")
+    print("-----------------------------------------------------------")
     print("Please select from the following options by typing the number:")
     print("1. Place a booking")
     print("2. Find a booking")
@@ -217,13 +218,13 @@ def choose_action():
     print("5. Exit the system and logout\n")
     choice = input("Selection: \n")
     if choice == "1":
-        print("---------------------------------------------------")
+        print("-----------------------------------------------------------")
         place_booking()
     elif choice == "3":
-        print("---------------------------------------------------")
+        print("-----------------------------------------------------------")
         cancel_booking()
     elif choice == "2":
-        print("---------------------------------------------------")
+        print("-----------------------------------------------------------")
         obtain_calendar()
     elif choice == "4":
         print("Function under construction")
@@ -300,6 +301,24 @@ def convert_date_time_info(length, date_input, time_input):
         return
     end = f"{date_input} {ending}:00"
     return (start, end)
+
+def calendar_check(events):
+    """
+    Checks the calendar for the date selected and the artist selected
+    Returns whether that date is free, the next available date with that artist
+    And whether not the other artist is free on the date selected.
+    """
+    # Runs a calendar search for the given dates and artist (only dates if user stated 'no preference')
+    # Determines the next available date for both artists
+    busy_artists = ["Kev", "Bev"]
+    for event in events:
+        summary = event.get('summary', '')
+    if not ("Kev" in summary for artist):
+        next_date_kev = event['start'].get('dateTime', event['start'].get('date'))
+    return next_date_kev
+
+    #return date_available, next_date_kev, next_date_bev
+
 
 def add_to_calendar(client_details):
     """

@@ -302,7 +302,7 @@ def convert_date_time_info(length, date_input, time_input):
     end = f"{date_input} {ending}:00"
     return (start, end)
 
-def calendar_check(events):
+def calendar_check(date_request, artist):
     """
     Checks the calendar for the date selected and the artist selected
     Returns whether that date is free, the next available date with that artist
@@ -338,9 +338,15 @@ def calendar_check(events):
         busy_artists = ["Kev", "Bev"]
         for event in events:
             summary = event.get('summary', '')
+        # Compare to requested date
+        if date_request == 
+            print("This date is unavailable, please select another date (next available shown): \n")
+        else:
+            print("This date is available and will be used in the booking")
         if not any(artist in summary for artist in busy_artists[0]):
             next_date_kev = event['start'].get('dateTime', event['start'].get('date'))
-            return next_date_kev
+        
+        return next_date_kev
 
     except HttpError as error:
             print('An error occurred: %s' % error)
@@ -409,7 +415,7 @@ def place_booking():
     
     # print("Finding the next available date...")
     kev_next_date = calendar_check(date_input)
-    print("The next available date for Kev is: " kev_next_date)
+    print(f"The next available date for Kev is:  {kev_next_date}")
     # need to add the code here to link to the calendar and check dates
     print("This date is available!")
     # or if the date is unavailable, the code needs to look for the next 
@@ -437,7 +443,8 @@ def place_booking():
     waiting = True if waiting_list.lower() == 'y' else False
 
     if age_appropriate == False:
-        print("Unable to place booking")
+        print("Unable to place booking, clients must be aged 18 or older. Returning to main booking programme...")
+        choose_action()
         return
     else:
         # store client info as a dictionary (to be stored against the booking date)

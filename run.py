@@ -308,15 +308,42 @@ def calendar_check(events):
     Returns whether that date is free, the next available date with that artist
     And whether not the other artist is free on the date selected.
     """
-    # Runs a calendar search for the given dates and artist (only dates if user stated 'no preference')
-    # Determines the next available date for both artists
-    busy_artists = ["Kev", "Bev"]
-    for event in events:
-        summary = event.get('summary', '')
-    if not ("Kev" in summary for artist):
-        next_date_kev = event['start'].get('dateTime', event['start'].get('date'))
-    return next_date_kev
+    # Calendar is called the same way as in other bits of calendar access code
+    CREDS = None
+    # The file token.json stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists('eicreds.json'):
+        CREDS = Credentials.from_service_account_file('eicreds.json')
+        SCOPED_CREDS = CREDS.with_scopes(SCOPE)
+    else:
+        print("Sorry, unable to access the calendar")
+    
+    # try/except statement to access the calendar, allowing for a program break
+    # if a problem is found
+    try:
+        bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)
 
+        # Call the Calendar API
+        now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+        events_result = bookings_calendar.events().list(calendarId='primary', timeMin=now, singleEvents=True).execute()
+        events = events_result.get('items', [])
+
+        if not events:
+            print('The whole upcoming calendar is clear of future bookings.')
+            return
+
+        # Runs a calendar search for the given dates and artist (only dates if user stated 'no preference')
+        # Determines the next available date for both artists
+        busy_artists = ["Kev", "Bev"]
+        for event in events:
+            summary = event.get('summary', '')
+        if not any(artist in summary for artist in busy_artists[0]):
+            next_date_kev = event['start'].get('dateTime', event['start'].get('date'))
+            return next_date_kev
+
+    except HttpError as error:
+            print('An error occurred: %s' % error)
     #return date_available, next_date_kev, next_date_bev
 
 
@@ -381,6 +408,8 @@ def place_booking():
     time_input = 11
     
     # print("Finding the next available date...")
+    kev_next_date = calendar_check(date_input)
+    print("The next available date for Kev is: " kev_next_date)
     # need to add the code here to link to the calendar and check dates
     print("This date is available!")
     # or if the date is unavailable, the code needs to look for the next 

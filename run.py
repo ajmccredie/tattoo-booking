@@ -347,8 +347,8 @@ def calendar_check(date_request, artist):
         # if a booking is found on that date, the nature of the booking needs to be found
         for event in events:
             summary = event.get('summary', '')
-            print(summary[2])
-            booked_artist = summary[2]
+            print(summary[12:15])
+            booked_artist = summary[12:15]
             start_time = event['start'].get('dateTime', event['start'].get('date'))
             print(start_time[0:10])
         # Compare to requested date (assuming every booking is a full day at this point)
@@ -358,10 +358,13 @@ def calendar_check(date_request, artist):
         else:
             print("This date is available and will be used in the booking")
         if not booked_artist == "Kev":
-                next_date_kev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
-                print(next_date_kev)
+            next_date_kev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
+            print(next_date_kev)
+        if not booked_artist == "Bev":
+            next_date_bev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
+            print(next_date_bev)
         
-        return next_date_kev
+        return date_available, next_date_kev, next_date_bev
 
     except HttpError as error:
             print('An error occurred: %s' % error)
@@ -429,7 +432,9 @@ def place_booking():
     time_input = 11
     
     # print("Finding the next available date...")
-    kev_next_date = calendar_check(date_input, artist)
+    date_available = calendar_check(date_input, artist)[0]
+    kev_next_date = calendar_check(date_input, artist)[1]
+    bev_next_date = calendar_check(date_input, artist)[2]
     print(f"The next available date for Kev is:  {kev_next_date}")
     # need to add the code here to link to the calendar and check dates
     print("This date is available!")

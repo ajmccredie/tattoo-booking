@@ -343,14 +343,14 @@ def calendar_check(date_request, artist):
 
         date_completely_free = date_request not in [event['start'].get('dateTime', event['start'].get('date')) for event in events]
         print(date_completely_free)
-        
+
         # if a booking is found on that date, the nature of the booking needs to be found
         for event in events:
             summary = event.get('summary', '')
-            print(summary)
+            print(summary[2])
             booked_artist = summary[2]
             start_time = event['start'].get('dateTime', event['start'].get('date'))
-            print(start_time)
+            print(start_time[0:10])
         # Compare to requested date (assuming every booking is a full day at this point)
         if date_request == start_time:
             date_available = False
@@ -358,7 +358,7 @@ def calendar_check(date_request, artist):
         else:
             print("This date is available and will be used in the booking")
         if not booked_artist == "Kev":
-                next_date_kev = event['start'].get('dateTime', event['start'].get('date'))
+                next_date_kev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
                 print(next_date_kev)
         
         return next_date_kev
@@ -480,10 +480,15 @@ def place_booking():
             add_to_calendar(client_details)
             book_another = input("Client booking confirmed.\n Do you wish to continue using the system? y/n\n")
             if book_another.lower() == 'y':
+                print("Returning to the main menu\n")   
                 choose_action()
-                print("Returning to the main menu\n")
             else:
-                return
+                logout_confirm = input("Are you sure you wish to logout of the system? (y/n)\n")
+                if logout_confirm == 'y':
+                    return
+                else:
+                    print("Returning to the main menu\n")   
+                    choose_action()
         else:
             print("Please restart the booking procedure")
             choose_action()

@@ -336,15 +336,30 @@ def calendar_check(date_request, artist):
         # Runs a calendar search for the given dates and artist (only dates if user stated 'no preference')
         # Determines the next available date for both artists
         busy_artists = ["Kev", "Bev"]
+        # set the default for the date to be 'available'
+        date_available = True
+        # set a default to be returned
+        next_date_kev = None
+
+        date_completely_free = date_request not in [event['start'].get('dateTime', event['start'].get('date')) for event in events]
+        print(date_completely_free)
+        
+        # if a booking is found on that date, the nature of the booking needs to be found
         for event in events:
             summary = event.get('summary', '')
-        # Compare to requested date
-        if date_request == 
+            print(summary)
+            booked_artist = summary[2]
+            start_time = event['start'].get('dateTime', event['start'].get('date'))
+            print(start_time)
+        # Compare to requested date (assuming every booking is a full day at this point)
+        if date_request == start_time:
+            date_available = False
             print("This date is unavailable, please select another date (next available shown): \n")
         else:
             print("This date is available and will be used in the booking")
-        if not any(artist in summary for artist in busy_artists[0]):
-            next_date_kev = event['start'].get('dateTime', event['start'].get('date'))
+        if not booked_artist == "Kev":
+                next_date_kev = event['start'].get('dateTime', event['start'].get('date'))
+                print(next_date_kev)
         
         return next_date_kev
 
@@ -414,7 +429,7 @@ def place_booking():
     time_input = 11
     
     # print("Finding the next available date...")
-    kev_next_date = calendar_check(date_input)
+    kev_next_date = calendar_check(date_input, artist)
     print(f"The next available date for Kev is:  {kev_next_date}")
     # need to add the code here to link to the calendar and check dates
     print("This date is available!")

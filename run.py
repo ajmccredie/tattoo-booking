@@ -340,6 +340,7 @@ def calendar_check(date_request, artist):
         date_available = True
         # set a default to be returned
         next_date_kev = None
+        next_date_bev = None
 
         date_completely_free = date_request not in [event['start'].get('dateTime', event['start'].get('date')) for event in events]
         print(date_completely_free)
@@ -359,10 +360,10 @@ def calendar_check(date_request, artist):
             print("This date is available and will be used in the booking")
         if not booked_artist == "Kev":
             next_date_kev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
-            print(next_date_kev)
+            print(f"The next date with Kev is: {next_date_kev}")
         if not booked_artist == "Bev":
             next_date_bev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
-            print(next_date_bev)
+            print(f"The next date with Bev is: {next_date_bev}")
         
         return date_available, next_date_kev, next_date_bev
 
@@ -430,21 +431,39 @@ def place_booking():
         date_input = input("Please enter the date for booking (YYYY-MM-DD): \n")
     # set default start time to 11am
     time_input = 11
-    
-    # print("Finding the next available date...")
+    print("Finding the next available date...")
     date_available = calendar_check(date_input, artist)[0]
     kev_next_date = calendar_check(date_input, artist)[1]
     bev_next_date = calendar_check(date_input, artist)[2]
     print(f"The next available date for Kev is:  {kev_next_date}")
+    print(f"The next available date for Bev is:  {bev_next_date}")
     # need to add the code here to link to the calendar and check dates
-    print("This date is available!")
+    while date_available == False:
+        leave_booking = input("Do you wish to return to the main menu? y/n\n")
+        if leave_booking == 'y':
+            choose_option()
+            break
+        else:
+            artist = ask_artist_preference()
+            # check the date the user wants
+            date_input = input("Please enter the date for booking (YYYY-MM-DD): \n")
+            # check validity of date input
+            while not date_valid(date_input):
+                print("Invalid date format. Please enter a valid date (YYYY-MM-DD).")
+                date_input = input("Please enter the date for booking (YYYY-MM-DD): \n")
+            # set default start time to 11am
+            time_input = 11
+            print("Finding the next available date...")
+            date_available = calendar_check(date_input, artist)[0]
+    else:
+        print("Date is available and will be used in the booking.")
     # or if the date is unavailable, the code needs to look for the next 
     # available date if requested.
     
     # once a date for the booking is found, the rest of the details are obtained
     client_name = input("Please enter client name: \n")
     # check validity of input and ask again if issue found
-    age_check = input("Please confirm client is 18 years old or older (y/n)\n")
+    age_check = input("Please confirm client is 18 years old or older y/n\n")
     # check validity of input and ask again if issue found
     client_phone = input("Please enter client phone number: \n")
     validated_phone = phone_valid(client_phone)
@@ -456,7 +475,7 @@ def place_booking():
     start = date_and_time[0]
     end = date_and_time[1]
     
-    waiting_list = input("Would the client like to join the waiting list? (y/n)\n")
+    waiting_list = input("Would the client like to join the waiting list? y/n\n")
     # check validity of input and ask again if issue found
     # age check and wanting to be added to waiting list are stored as a boolean values
     age_appropriate = True if age_check.lower() == 'y' else False
@@ -488,7 +507,7 @@ def place_booking():
                 print("Returning to the main menu\n")   
                 choose_action()
             else:
-                logout_confirm = input("Are you sure you wish to logout of the system? (y/n)\n")
+                logout_confirm = input("Are you sure you wish to logout of the system? y/n\n")
                 if logout_confirm == 'y':
                     return
                 else:
@@ -532,7 +551,7 @@ def cancel_booking():
                 matched_events.append(event)
                 start = event['start'].get('dateTime', event['start'].get('date'))
                 print(f"The following booking(s) matching your description has been found: ", start,":", event['summary'],".", event['description'],".")
-                confirm_action = input("Do you wish to delete the booking(s)? (y/n)\n")
+                confirm_action = input("Do you wish to delete the booking(s)? y/n\n")
                 if confirm_action.lower() == 'n':
                     print("Booking deletion cancelled, returning to main menu.\n")
                     choose_action()

@@ -333,40 +333,39 @@ def calendar_check(date_request, artist):
             print('The whole upcoming calendar is clear of future bookings.')
             return
 
-        # Runs a calendar search for the given dates and artist (only dates if user stated 'no preference')
-        # Determines the next available date for both artists
-        busy_artists = ["Kev", "Bev"]
-        # set the default for the date to be 'available'
-        date_available = True
-        # set a default to be returned
-        next_date_kev = None
-        next_date_bev = None
+        # Redirects to a subroutine to determine which artist to assign if 'no preference' is selected
+        if artist == "no preference":
+            artist = assign_artist(events, date_request)
+        else:
+            # Runs a calendar search for the given dates and artist (only dates if user stated 'no preference')
+            # Determines the next available date for both artists
+            busy_artists = ["Kev", "Bev"]
+            # set the default for the date to be 'available'
+            date_available = True
+            # set a default to be returned
+            next_date_kev = None
+            next_date_bev = None
 
-        date_completely_free = date_request not in [event['start'].get('dateTime', event['start'].get('date')) for event in events]
-        print(date_completely_free)
+            date_completely_free = date_request not in [event['start'].get('dateTime', event['start'].get('date')) for event in events]
 
-        # if a booking is found on that date, the nature of the booking needs to be found
-        for event in events:
-            summary = event.get('summary', '')
-            booked_artist = summary[12:15]
-            start_time = event['start'].get('dateTime', event['start'].get('date'))
-        # Compare to requested date (assuming every booking is a full day at this point)
-            if date_request == start_time[0:10]:
-                if artist == booked_artist:
-                    date_available = False
-                    print("This date is unavailable, please select another date/artist (next available shown): \n")
-                else:
-                    continue
+            # if a booking is found on that date, the nature of the booking needs to be found
+            for event in events:
+                summary = event.get('summary', '')
+                booked_artist = summary[12:15]
+                start_time = event['start'].get('dateTime', event['start'].get('date'))
+            # Compare to requested date (assuming every booking is a full day at this point)
+                if date_request == start_time[0:10]:
+                    if artist == booked_artist:
+                        date_available = False
+                    else:
+                        continue
+                
+                if not booked_artist == "Kev" and not next_date_kev:
+                    next_date_kev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
+                
+                if not booked_artist == "Bev" and not next_date_bev:
+                    next_date_bev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
             
-        if not booked_artist == "Kev" and not next_date_kev:
-            next_date_kev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
-            
-        if not booked_artist == "Bev":
-            next_date_bev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
-            print(f"The next date with Bev is: {next_date_bev}")
-
-        print(f"The next date with Kev is: {next_date_kev}")
-        
         return date_available, next_date_kev, next_date_bev
 
     except HttpError as error:
@@ -432,14 +431,19 @@ def place_booking():
         date_input = input("Please enter the date for booking (YYYY-MM-DD): \n")
     # set default start time to 11am
     time_input = 11
-    print("Finding the next available date...")
+    print("Checking the calendar...")
     date_available = calendar_check(date_input, artist)[0]
     kev_next_date = calendar_check(date_input, artist)[1]
     bev_next_date = calendar_check(date_input, artist)[2]
+    if date_available == False:
+            print("This date is unavailable, please select another date/artist (next available shown): \n")
+    else:
+        print("The date you selected is free and will be used in the booking.\n For information, the next available dates are also shown:\n")
     print(f"The next available date for Kev is:  {kev_next_date}")
     print(f"The next available date for Bev is:  {bev_next_date}")
     # need to add the code here to link to the calendar and check dates
     while date_available == False:
+        print("You will need to select another date for that artist to continue your booking (press 'n' to be directed to new date input)\n")
         leave_booking = input("Do you wish to return to the main menu? y/n\n")
         if leave_booking == 'y':
             choose_action()

@@ -8,6 +8,7 @@ import datetime
 import os.path
 # import pandas to handle the date/time information (suggested from medium.com/swlh/convert-any-dates-in-spreadsheets-using-python)
 import pandas as pd
+import random
 
 from google.auth.transport.requests import Request
 from google.oauth2.service_account import Credentials
@@ -302,6 +303,31 @@ def convert_date_time_info(length, date_input, time_input):
     end = f"{date_input} {ending}:00"
     return (start, end)
 
+def assign_artist(events, date_request):
+    """ 
+    When the user selects there is no artist preference, the date is checked against both
+    It will then return one of the following: a message that both artists are busy, assign 
+    it to the free artist if only one is busy, or randomly assign one if both are free
+    """
+    busy_artists = ["Kev", "Bev"]
+    available_artists = []
+    for event in events:
+        start_time = event['start'].get('dateTime', event['start'].get('date'))
+        booked_artist = event.get('summary', '')[12:15]
+        if date_request == start_time[0:10]:
+            if not booked_artist in busy_artists:
+                available_artists.append(booked_artist)
+                print(available_artists)
+    
+    # Check if anyone/both is free and return information to allow the booking to continue
+    if len(available_artists) == 0:
+        return None
+    elif len(available_artists) == 1:
+        return available_artist[0]
+    else:
+        return random.choice(available_artists)
+
+
 def calendar_check(date_request, artist):
     """
     Checks the calendar for the date selected and the artist selected
@@ -323,49 +349,42 @@ def calendar_check(date_request, artist):
     # if a problem is found
     try:
         bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)
-
         # Call the Calendar API
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
         events_result = bookings_calendar.events().list(calendarId='primary', timeMin=now, singleEvents=True).execute()
         events = events_result.get('items', [])
-
         if not events:
             print('The whole upcoming calendar is clear of future bookings.')
             return
+        # Runs a calendar search for the given dates and artist (only dates if user stated 'no preference')
+        # Determines the next available date for both artists
+        busy_artists = ["Kev", "Bev"]
+        # set the default for the date to be 'available'
+        date_available = True
+        # set a default to be returned
+        next_date_kev = None
+        next_date_bev = None
 
-        # Redirects to a subroutine to determine which artist to assign if 'no preference' is selected
-        if artist == "no preference":
-            artist = assign_artist(events, date_request)
-        else:
-            # Runs a calendar search for the given dates and artist (only dates if user stated 'no preference')
-            # Determines the next available date for both artists
-            busy_artists = ["Kev", "Bev"]
-            # set the default for the date to be 'available'
-            date_available = True
-            # set a default to be returned
-            next_date_kev = None
-            next_date_bev = None
+        date_completely_free = date_request not in [event['start'].get('dateTime', event['start'].get('date')) for event in events]
 
-            date_completely_free = date_request not in [event['start'].get('dateTime', event['start'].get('date')) for event in events]
-
-            # if a booking is found on that date, the nature of the booking needs to be found
-            for event in events:
-                summary = event.get('summary', '')
-                booked_artist = summary[12:15]
-                start_time = event['start'].get('dateTime', event['start'].get('date'))
+        # if a booking is found on that date, the nature of the booking needs to be found
+        for event in events:
+            summary = event.get('summary', '')
+            booked_artist = summary[12:15]
+            start_time = event['start'].get('dateTime', event['start'].get('date'))
             # Compare to requested date (assuming every booking is a full day at this point)
-                if date_request == start_time[0:10]:
-                    if artist == booked_artist:
-                        date_available = False
-                    else:
-                        continue
+            if date_request == start_time[0:10]:
+                if artist == booked_artist:
+                    date_available = False
+                else:
+                    continue
                 
-                if not booked_artist == "Kev" and not next_date_kev:
-                    next_date_kev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
-                
-                if not booked_artist == "Bev" and not next_date_bev:
-                    next_date_bev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
-            
+            if not booked_artist == "Kev" and not next_date_kev:
+                next_date_kev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
+               
+            if not booked_artist == "Bev" and not next_date_bev:
+                next_date_bev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
+           
         return date_available, next_date_kev, next_date_bev
 
     except HttpError as error:

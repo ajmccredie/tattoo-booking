@@ -348,19 +348,16 @@ def calendar_check(date_request, artist):
         # if a booking is found on that date, the nature of the booking needs to be found
         for event in events:
             summary = event.get('summary', '')
-         #   print(summary[12:15])
             booked_artist = summary[12:15]
             start_time = event['start'].get('dateTime', event['start'].get('date'))
-       #     print(start_time[0:10])
-        #    print(f"The date required was {date_request}")
         # Compare to requested date (assuming every booking is a full day at this point)
-            if date_request == start_time[0:10] and artist == booked_artist:
-                date_available = False
-                print("This date is unavailable, please select another date (next available shown): \n")
-            elif date_request == start_time[0:10] and not artist == booked_artist:
-                print("This date is available and will be used in the booking")
-            else:
-                continue
+            if date_request == start_time[0:10]:
+                if artist == booked_artist:
+                    date_available = False
+                    print("This date is unavailable, please select another date (next available shown): \n")
+                else:
+                    continue
+                   # print("This date is available and will be used in the booking")
         if not booked_artist == "Kev":
             next_date_kev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
             print(f"The next date with Kev is: {next_date_kev}")
@@ -372,7 +369,6 @@ def calendar_check(date_request, artist):
 
     except HttpError as error:
             print('An error occurred: %s' % error)
-    #return date_available, next_date_kev, next_date_bev
 
 
 def add_to_calendar(client_details):

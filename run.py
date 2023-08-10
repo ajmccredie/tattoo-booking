@@ -354,16 +354,18 @@ def calendar_check(date_request, artist):
             if date_request == start_time[0:10]:
                 if artist == booked_artist:
                     date_available = False
-                    print("This date is unavailable, please select another date (next available shown): \n")
+                    print("This date is unavailable, please select another date/artist (next available shown): \n")
                 else:
                     continue
-                   # print("This date is available and will be used in the booking")
-        if not booked_artist == "Kev":
+            
+        if not booked_artist == "Kev" and not next_date_kev:
             next_date_kev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
-            print(f"The next date with Kev is: {next_date_kev}")
+            
         if not booked_artist == "Bev":
             next_date_bev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
             print(f"The next date with Bev is: {next_date_bev}")
+
+        print(f"The next date with Kev is: {next_date_kev}")
         
         return date_available, next_date_kev, next_date_bev
 

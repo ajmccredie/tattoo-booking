@@ -268,7 +268,7 @@ def phone_valid(client_phone):
             return phone_entry
         else:
             print("Invalid phone number. Please check and enter a 10-digit phone number:\n")
-            client_phone = input("Please entter client phone number: \n")
+            client_phone = input("Please enter client phone number: \n")
     else:
         print("Unable to place booking at this time")
         choose_action()
@@ -298,7 +298,7 @@ def convert_date_time_info(length, date_input, time_input):
         duration = 4
         ending = time_input + duration
     else:
-        print("Sorry, duration invalid, restarting booking process...")
+        print("Sorry, duration invalid, please enter a valid length of 'full' or 'half'")
         choose_action()
         return
     end = f"{date_input} {ending}:00"
@@ -319,7 +319,6 @@ def assign_artist(events, date_request):
             if not booked_artist in busy_artists:
                 available_artists.append(booked_artist)
                 print(available_artists)
-    
     # Check if anyone/both is free and return information to allow the booking to continue
     if len(available_artists) == 0:
         return None
@@ -357,11 +356,21 @@ def calendar_check(date_request, artist):
         if not events:
             print('The whole upcoming calendar is clear of future bookings.')
             return
-        # Runs a calendar search for the given dates and artist (only dates if user stated 'no preference')
-        # Determines the next available date for both artists
-        busy_artists = ["Kev", "Bev"]
+        
         # set the default for the date to be 'available'
         date_available = True
+        assigned_artist = None
+        
+        # Runs a calendar search for the given dates and artist (or assigns an artist first if user stated 'no preference')
+        assigned_artist = assign_artist(events, date_request)
+        if assigned_artist is None:
+            date_available = False
+        else:
+            date_available = True
+
+        # Determines the next available date for both artists
+        busy_artists = ["Kev", "Bev"]
+        
         # set a default to be returned
         next_date_kev = None
         next_date_bev = None
@@ -386,7 +395,7 @@ def calendar_check(date_request, artist):
             if not booked_artist == "Bev" and not next_date_bev:
                 next_date_bev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
            
-        return date_available, next_date_kev, next_date_bev
+        return date_available, next_date_kev, next_date_bev, assigned_artist
 
     except HttpError as error:
             print('An error occurred: %s' % error)
@@ -455,8 +464,11 @@ def place_booking():
     date_available = calendar_check(date_input, artist)[0]
     kev_next_date = calendar_check(date_input, artist)[1]
     bev_next_date = calendar_check(date_input, artist)[2]
+    assigned_artist = calendar_check(date_input, artist)[3]
+    if assigned_artist is not None:
+        print(f"Your assigned artist for the booking is {assigned_artist}")
     if date_available == False:
-            print("This date is unavailable, please select another date/artist (next available shown): \n")
+        print("This date is unavailable, please select another date/artist (next available shown): \n")
     else:
         print("The date you selected is free and will be used in the booking.\n For information, the next available dates are also shown:\n")
     print(f"The next available date for Kev is:  {kev_next_date}")
@@ -482,8 +494,7 @@ def place_booking():
             date_available = calendar_check(date_input, artist)[0]
     else:
         print("Date is available and will be used in the booking.")
-    # or if the date is unavailable, the code needs to look for the next 
-    # available date if requested.
+        print(f"Your artist is confirmed as {artist}")
     
     # once a date for the booking is found, the rest of the details are obtained
     client_name = input("Please enter client name: \n")

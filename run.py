@@ -236,7 +236,8 @@ def choose_action():
         else:
             choose_action()
     else:
-        print("Invalid function choice, terminating programme.")
+        print("\nInvalid function choice. Please select a number between 1 and 5.")
+        choose_action()
 
 def ask_artist_preference():
     """

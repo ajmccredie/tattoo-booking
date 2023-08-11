@@ -323,7 +323,7 @@ def assign_artist(events, date_request):
     if len(available_artists) == 0:
         return None
     elif len(available_artists) == 1:
-        return available_artist[0]
+        return available_artists[0]
     else:
         return random.choice(available_artists)
 
@@ -362,11 +362,12 @@ def calendar_check(date_request, artist):
         assigned_artist = None
         
         # Runs a calendar search for the given dates and artist (or assigns an artist first if user stated 'no preference')
-        assigned_artist = assign_artist(events, date_request)
-        if assigned_artist is None:
-            date_available = False
+        if artist == "No preference":
+            assigned_artist = assign_artist(events, date_request)
+            if assigned_artist is None:
+                date_available = False
         else:
-            date_available = True
+            assigned_artist = artist
 
         # Determines the next available date for both artists
         busy_artists = ["Kev", "Bev"]

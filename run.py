@@ -380,10 +380,27 @@ def calendar_check(date_request, artist):
         # set a default to be returned
         next_date_kev = None
         next_date_bev = None
+        today = datetime.date.today()
         current_date = datetime.date.today()
         print(f"Today's date is {current_date}")
 
-        date_completely_free = date_request not in [event['start'].get('dateTime', event['start'].get('date')) for event in events]
+        # find all the dates without events
+        completely_free_dates = []
+        while True:
+            date_info = current_date.isoformat()
+            event_found = False
+            for event in events:
+                event_start = event['start'].get('dateTime', event['start'].get('date'))[0:10]
+                if date_info == event_start:
+                    print("Match")
+                    event_found = True
+                    break
+            if not event_found:
+                completely_free_dates.append(date_info)
+            current_date += datetime.timedelta(days=1)
+            if current_date > today + datetime.timedelta(days=90):
+                break
+        print(completely_free_dates)
 
         # if a booking is found on that date, the nature of the booking needs to be found
         for event in events:
@@ -398,10 +415,11 @@ def calendar_check(date_request, artist):
                 else:
                     continue
                 
-            if event_date >= current_date and not booked_artist == "Kev" and not next_date_kev:
+            if not booked_artist == "Kev" and not next_date_kev:
                 next_date_kev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
+                print(next_date_kev)
                
-            if event_date >= current_date and not booked_artist == "Bev" and not next_date_bev:
+            if not booked_artist == "Bev" and not next_date_bev:
                 next_date_bev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
            
         return date_available, next_date_kev, next_date_bev, assigned_artist

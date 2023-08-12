@@ -311,21 +311,24 @@ def assign_artist(events, date_request):
     it to the free artist if only one is busy, or randomly assign one if both are free
     """
     busy_artists = ["Kev", "Bev"]
-    available_artists = []
+    print("Attempting to assign an artist")
+
     for event in events:
         start_time = event['start'].get('dateTime', event['start'].get('date'))
         booked_artist = event.get('summary', '')[12:15]
         if date_request == start_time[0:10]:
-            if not booked_artist in busy_artists:
-                available_artists.append(booked_artist)
-                print(available_artists)
+            if booked_artist in busy_artists:
+                busy_artists.remove(booked_artist)
+                print(busy_artists)
+            else:
+                print("Neither artist busy on date selected.")
     # Check if anyone/both is free and return information to allow the booking to continue
-    if len(available_artists) == 0:
+    if len(busy_artists) == 0:
         return None
-    elif len(available_artists) == 1:
-        return available_artists[0]
+    elif len(busy_artists) == 1:
+        return busy_artists[0]
     else:
-        return random.choice(available_artists)
+        return random.choice(busy_artists)
 
 
 def calendar_check(date_request, artist):
@@ -363,12 +366,14 @@ def calendar_check(date_request, artist):
         
         # Runs a calendar search for the given dates and artist (or assigns an artist first if user stated 'no preference')
         if artist == "No preference":
+            print("You selected no preference, so checking the requested date for free artists.")
             assigned_artist = assign_artist(events, date_request)
             if assigned_artist is None:
                 date_available = False
         else:
             assigned_artist = artist
 
+        print(f"Your artist is {assigned_artist}")
         # Determines the next available date for both artists
         busy_artists = ["Kev", "Bev"]
         
@@ -462,10 +467,7 @@ def place_booking():
     # set default start time to 11am
     time_input = 11
     print("Checking the calendar...")
-    date_available = calendar_check(date_input, artist)[0]
-    kev_next_date = calendar_check(date_input, artist)[1]
-    bev_next_date = calendar_check(date_input, artist)[2]
-    assigned_artist = calendar_check(date_input, artist)[3]
+    date_available, kev_next_date, bev_next_date, assigned_artist = calendar_check(date_input, artist)
     if assigned_artist is not None:
         print(f"Your assigned artist for the booking is {assigned_artist}")
     if date_available == False:

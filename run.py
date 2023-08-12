@@ -380,6 +380,8 @@ def calendar_check(date_request, artist):
         # set a default to be returned
         next_date_kev = None
         next_date_bev = None
+        current_date = datetime.date.today()
+        print(f"Today's date is {current_date}")
 
         date_completely_free = date_request not in [event['start'].get('dateTime', event['start'].get('date')) for event in events]
 
@@ -388,17 +390,18 @@ def calendar_check(date_request, artist):
             summary = event.get('summary', '')
             booked_artist = summary[12:15]
             start_time = event['start'].get('dateTime', event['start'].get('date'))
+            event_date = datetime.datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S%z").date()
             # Compare to requested date (assuming every booking is a full day at this point)
-            if date_request == start_time[0:10]:
+            if date_request == start_time:
                 if artist == booked_artist:
                     date_available = False
                 else:
                     continue
                 
-            if not booked_artist == "Kev" and not next_date_kev:
+            if event_date >= current_date and not booked_artist == "Kev" and not next_date_kev:
                 next_date_kev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
                
-            if not booked_artist == "Bev" and not next_date_bev:
+            if event_date >= current_date and not booked_artist == "Bev" and not next_date_bev:
                 next_date_bev = event['start'].get('dateTime', event['start'].get('date'))[0:10]
            
         return date_available, next_date_kev, next_date_bev, assigned_artist

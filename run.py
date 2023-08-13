@@ -590,7 +590,7 @@ def waiting_list_view(events, matched_events):
     earlier slot
     """
 
-    print(f"The booking which is being removed is {matched_events}")
+    print(f"The booking which is being removed is {matched_events[0]['summary'], matched_events[0]['description']}")
     # if a booking is found on that date, the nature of the booking needs to be found
     for event in events:
         summary = event.get('summary', '')
@@ -647,7 +647,7 @@ def cancel_booking():
                         print("Booking deleted.")
                         # question user here as to whether they want to see the next name on the waiting list?
                         while True:
-                            waiting_list_request = input("Do you wish to see the next few clients on the waiting list? y/n")
+                            waiting_list_request = input("Do you wish to see the next few clients on the waiting list? y/n\n")
                             if waiting_list_request == 'n':
                                 print("Returning to main menu....\n")
                                 choose_action()
@@ -661,8 +661,9 @@ def cancel_booking():
                     print("Invalid command, unable to complete booking deletion.\n")
                     choose_action()
             else:
-                print("No matching bookings found, please check your search criteria.")
-
+                print("Checking next booking")
+        print("No matching bookings found, please check your search criteria.\nReturning to main menu...")
+        choose_action()
     except HttpError as error:
         print('An error occurred: %s' % error)
 

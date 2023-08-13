@@ -582,6 +582,30 @@ def place_booking():
             return
 
 
+def waiting_list_view(events, matched_events):
+    """
+    Brings up the next 5 clients on the waiting list for the same artist booked on later dates, and displays them 
+    with phone numbers and tattoo lengths.
+    There is an option to then replace the deleted booking with the first one to confirm on the phone they want the
+    earlier slot
+    """
+
+    print(f"The booking which is being removed is {matched_events}")
+    # if a booking is found on that date, the nature of the booking needs to be found
+        for event in events:
+            summary = event.get('summary', '')
+            booked_artist = summary[12:15]
+            start_time = event['start'].get('dateTime', event['start'].get('date'))
+            event_date = datetime.datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S%z").date()
+            print("Here is a list of events")
+    
+    return
+
+
+
+
+
+
 def cancel_booking():
     """
     A series of validated user inputs to determine, check and delete the unwanted booking
@@ -624,8 +648,17 @@ def cancel_booking():
                         bookings_calendar.events().delete(calendarId='primary', eventId=event_identifier).execute()
                         print("Booking deleted.")
                         # question user here as to whether they want to see the next name on the waiting list?
-                        print("Returning to main menu....\n")
-                        choose_action()
+                        while True:
+                            waiting_list_request = input("Do you wish to see the next few clients on the waiting list? y/n")
+                            if waiting_list_request == 'n':
+                                print("Returning to main menu....\n")
+                                choose_action()
+                                break
+                            elif waiting_list_request == 'y':
+                                waiting_list_view(events, matched_events)
+                                break
+                            else:
+                                print("Invalid input, please enter 'y' or 'n'.")                            
                 else:
                     print("Invalid command, unable to complete booking deletion.\n")
                     choose_action()

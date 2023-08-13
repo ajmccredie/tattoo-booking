@@ -592,19 +592,14 @@ def waiting_list_view(events, matched_events):
 
     print(f"The booking which is being removed is {matched_events}")
     # if a booking is found on that date, the nature of the booking needs to be found
-        for event in events:
-            summary = event.get('summary', '')
-            booked_artist = summary[12:15]
-            start_time = event['start'].get('dateTime', event['start'].get('date'))
-            event_date = datetime.datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S%z").date()
-            print("Here is a list of events")
+    for event in events:
+        summary = event.get('summary', '')
+        booked_artist = summary[12:15]
+        start_time = event['start'].get('dateTime', event['start'].get('date'))
+        event_date = datetime.datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S%z").date()
+        print("Here is a list of events")
     
     return
-
-
-
-
-
 
 def cancel_booking():
     """
@@ -634,10 +629,13 @@ def cancel_booking():
         # filter all the results obtained to just the ones matching the search criteria
         matched_events = []
         for event in events:
-            if summary in event.get('summary', ''):
+            event_summary = event.get('summary', '')
+            start_time = event['start'].get('dateTime', event['start'].get('date'))[0:10]
+            event_client_name = event.get('description', '').split(', ')[0]
+
+            if summary in event_summary and date_search == start_time and client_name == event_client_name:
                 matched_events.append(event)
-                start = event['start'].get('dateTime', event['start'].get('date'))
-                print(f"The following booking(s) matching your description has been found: ", start,":", event['summary'],".", event['description'],".")
+                print(f"The following booking(s) matching your description has been found: ", start_time,": ", event['summary'],".", event['description'],".")
                 confirm_action = input("Do you wish to delete the booking(s)? y/n\n")
                 if confirm_action.lower() == 'n':
                     print("Booking deletion cancelled, returning to main menu.\n")

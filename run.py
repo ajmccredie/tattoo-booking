@@ -78,7 +78,6 @@ def calendar_search():
     """
     Accesses all of the information available in the calendar in order to allow searches
     """
-
     CREDS = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -193,8 +192,8 @@ def search_by_artist(events):
 
 # ask for username and password to be entered
 def login():
-    username = input("Please enter your username: ")
-    password = input("Please enter your password: ")
+    username = input("Please enter your username: \n")
+    password = input("Please enter your password: \n")
 
 # open the user_login secure file in 'read' and check whether
 # credentials are accurate

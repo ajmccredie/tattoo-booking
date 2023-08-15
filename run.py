@@ -606,9 +606,7 @@ def waiting_list_view(events, matched_events):
         booked_artist = summary[12:15]
         start_time = event['start'].get('dateTime', event['start'].get('date'))
         start_hour = event['start'].get('dateTime', event['start'].get('time'))[11:13]
-        print(start_hour)
         end_time = event['end'].get('dateTime', event['end'].get('time'))[11:13]
-        print(end_time)
         length = int(end_time) - int(start_hour)
         if length == 7:
             tattoo_length = "full day"
@@ -669,7 +667,7 @@ def cancel_booking():
 
             if summary in event_summary and date_search == start_time and client_name == event_client_name:
                 matched_events.append(event)
-                print(f"The following booking(s) matching your description has been found: ", start_time,": ", event['summary'],".", event['description'],".")
+                print(f"The following booking(s) matching your description has been found: \n", start_time,": ", event['summary'],".", event['description'],".")
                 confirm_action = input("Do you wish to delete the booking(s)? y/n\n")
                 if confirm_action.lower() == 'n':
                     print("Booking deletion cancelled, returning to main menu.\n")

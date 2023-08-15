@@ -619,9 +619,10 @@ def waiting_list_view(events, matched_events):
     There is an option to then replace the deleted booking with the first one to confirm on the phone they want the
     earlier slot
     """
-
     print(f"The booking which is being removed is {matched_events[0]['summary'], matched_events[0]['description']}")
     removed_date = datetime.datetime.strptime(matched_events[0]['start']['dateTime'], "%Y-%m-%dT%H:%M:%S%z").date()
+    removed_artist = matched_events[0]['summary'][12:15]
+    print(removed_artist)
     waiting_list_clients = []
     # if a booking is found on that date, the nature of the booking needs to be found
     for event in events:
@@ -639,7 +640,7 @@ def waiting_list_view(events, matched_events):
         description = event.get('description','')
         description_split = description.split()
         waiting_boolean = description_split[-1]
-        if waiting_boolean == "True" and event_date > removed_date:
+        if waiting_boolean == "True" and event_date > removed_date and removed_artist == booked_artist:
             client_name = description_split[0]
             client_phone = description_split[1]
             client_tattoo_length = tattoo_length
@@ -649,17 +650,25 @@ def waiting_list_view(events, matched_events):
                 'tattoo_length': client_tattoo_length,
                 'date': event_date
             })            
-    print("Here are the next (upto) 5 clients on the waiting list:")
+    print("Here are the next (upto) 5 clients on the waiting list for the same artist:")
     index = 1
     for client in waiting_list_clients[0:5]:
         print(f"{index}. Name: {client['name']} Phone: {client['phone']} Tattoo length: {client['tattoo_length']} Date: {client['date']}")
         index += 1
-    select_client_for_replacement = input("Select a client from the waiting list to take the cancelled slot by entering the index number (1-5)\n(Select any other key to return to the main menu\n")
+    select_client_for_replacement = input("Select a client from the waiting list to take the cancelled slot by entering the index number (1-5).\n(Select any other key to return to the main menu\n")
     try:
         select_index = int(select_client_for_replacement)
         if 1<= select_index <= min(len(waiting_list_clients), 5):
             selected_client = waiting_list_clients[select_index - 1]
-            print(f"You've selected: Name: {selected_client['name']} Phone: {selected_client['phone']}")
+            print(f"You've selected: Name: {selected_client['name']} Phone: {selected_client['phone']} \nThis booking will be moved into the free slot.")
+            selected_client['start'] = removed_date.strftime('%Y-%m-%dT%H:%M:%SZ') 
+            if client_tattoo_length == "full day":
+                selected_client['end'] = (removed_date + datetime.timedelta(hours=7)).strftime('%Y-%m-%dT%H:%M:%SZ')
+            elif client_tattoo_length == "half day":
+                selected_client['end'] = (removed_date + datetime.timedelta(hours=4)).strftime('%Y-%m-%dT%H:%M:%SZ')
+            print("Waiting list client has been moved")
+            print(f"Here are the new details for that booking: ", selected_client)
+            print("Returning to main menu...")
     except ValueError:
         print("Returning to main menu...")
         choose_action() 

@@ -610,16 +610,15 @@ def waiting_list_view(events, matched_events):
         if waiting_boolean == "True":
             client_name = description_split[0]
             client_phone = description_split[1]
-            client_tattoo_length = description_split[-2]
             waiting_list_clients.append({
                 'name': client_name,
                 'phone': client_phone,
                 'tattoo_length': client_tattoo_length,
                 'date': event_date
             })            
-        print("Here are the next 5 clients on the waiting list:")
-        for i, client in waiting_list_clients[1:5]:
-            print(f"{i}. Name: {client['name']}, Phone: {client['phone']}, Tattoo length: {client['tattoo_length']}, Date: {client['date']}")
+    print("Here are the next 5 clients on the waiting list:")
+    for client in waiting_list_clients[1:5]:
+        print(f"1. Name: {client['name']} Phone: {client['phone']} Tattoo length: {client['tattoo_length']} Date: {client['date']}")
     return waiting_list_clients
 
 def cancel_booking():
@@ -682,8 +681,8 @@ def cancel_booking():
                     print("Invalid command, unable to complete booking deletion.\n")
                     choose_action()
             else:
-                print("Checking next booking")
-        print("No matching bookings found, please check your search criteria.\nReturning to main menu...")
+                continue
+        print("If no matching bookings were found, please check your search criteria.\nReturning to main menu...")
         choose_action()
     except HttpError as error:
         print('An error occurred: %s' % error)

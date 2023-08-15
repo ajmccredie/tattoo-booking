@@ -50,11 +50,9 @@ def obtain_calendar():
         print('Getting the upcoming 10 events')
         events_result = bookings_calendar.events().list(calendarId='primary', timeMin=now, maxResults=10, singleEvents=True).execute()
         events = events_result.get('items', [])
-
         if not events:
             print('No upcoming events found.')
             return
-
         # Prints the start and name of the next 10 events
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
@@ -598,15 +596,31 @@ def waiting_list_view(events, matched_events):
     """
 
     print(f"The booking which is being removed is {matched_events[0]['summary'], matched_events[0]['description']}")
+    # removed_date = 
+    waiting_list_clients = []
     # if a booking is found on that date, the nature of the booking needs to be found
     for event in events:
         summary = event.get('summary', '')
         booked_artist = summary[12:15]
         start_time = event['start'].get('dateTime', event['start'].get('date'))
         event_date = datetime.datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S%z").date()
-        print("Here is a list of events")
-    
-    return
+        description = event.get('description','')
+        description_split = description.split()
+        waiting_boolean = description_split[-1]
+        if waiting_boolean == "True":
+            client_name = description_split[0]
+            client_phone = description_split[1]
+            client_tattoo_length = description_split[-2]
+            waiting_list_clients.append({
+                'name': client_name,
+                'phone': client_phone,
+                'tattoo_length': client_tattoo_length,
+                'date': event_date
+            })            
+        print("Here are the next 5 clients on the waiting list:")
+        for i, client in waiting_list_clients[1:5]:
+            print(f"{i}. Name: {client['name']}, Phone: {client['phone']}, Tattoo length: {client['tattoo_length']}, Date: {client['date']}")
+    return waiting_list_clients
 
 def cancel_booking():
     """

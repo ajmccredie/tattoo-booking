@@ -598,7 +598,7 @@ def waiting_list_view(events, matched_events):
     """
 
     print(f"The booking which is being removed is {matched_events[0]['summary'], matched_events[0]['description']}")
-    removed_date = datetime.datetime.strptime(matched_events[0]['start']['dateTime'], "%Y-%m-%dT%H:%S%z").date()
+    removed_date = datetime.datetime.strptime(matched_events[0]['start']['dateTime'], "%Y-%m-%dT%H:%M:%S%z").date()
     waiting_list_clients = []
     # if a booking is found on that date, the nature of the booking needs to be found
     for event in events:

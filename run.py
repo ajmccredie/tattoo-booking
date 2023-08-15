@@ -15,6 +15,7 @@ from google.oauth2.service_account import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from dateutil.relativedelta import relativedelta
 
 # If modifying these scopes, delete the file token.json.
 SCOPE = [
@@ -641,6 +642,7 @@ def waiting_list_view(events, matched_events):
         description_split = description.split()
         waiting_boolean = description_split[-1]
         if waiting_boolean == "True" and event_date > removed_date and removed_artist == booked_artist:
+            event_set_to_move = event
             client_name = description_split[0]
             client_phone = description_split[1]
             client_tattoo_length = tattoo_length
@@ -648,27 +650,28 @@ def waiting_list_view(events, matched_events):
                 'name': client_name,
                 'phone': client_phone,
                 'tattoo_length': client_tattoo_length,
-                'date': event_date
+                'start': event_date
             })            
     print("Here are the next (upto) 5 clients on the waiting list for the same artist:")
     index = 1
     for client in waiting_list_clients[0:5]:
-        print(f"{index}. Name: {client['name']} Phone: {client['phone']} Tattoo length: {client['tattoo_length']} Date: {client['date']}")
+        print(f"{index}. Name: {client['name']} Phone: {client['phone']} Tattoo length: {client['tattoo_length']} Date: {client['start']}")
         index += 1
-    select_client_for_replacement = input("Select a client from the waiting list to take the cancelled slot by entering the index number (1-5).\n(Select any other key to return to the main menu\n")
+    select_client_for_replacement = input("Select a client from the waiting list to take the cancelled slot by entering the index number (1-5).\n(Select any other key to return to the main menu)\n")
     try:
         select_index = int(select_client_for_replacement)
         if 1<= select_index <= min(len(waiting_list_clients), 5):
             selected_client = waiting_list_clients[select_index - 1]
             print(f"You've selected: Name: {selected_client['name']} Phone: {selected_client['phone']} \nThis booking will be moved into the free slot.")
             selected_client['start'] = removed_date.strftime('%Y-%m-%dT%H:%M:%SZ') 
+            event_id = event_set_to_move['id']
             if client_tattoo_length == "full day":
                 selected_client['end'] = (removed_date + datetime.timedelta(hours=7)).strftime('%Y-%m-%dT%H:%M:%SZ')
             elif client_tattoo_length == "half day":
                 selected_client['end'] = (removed_date + datetime.timedelta(hours=4)).strftime('%Y-%m-%dT%H:%M:%SZ')
-            print("Waiting list client has been moved")
-            print(f"Here are the new details for that booking: ", selected_client)
-            print("Returning to main menu...")
+            return selected_client, event_set_to_move, event_id
+        else:
+            print("Invalid selection. No further changes have been made.")
     except ValueError:
         print("Returning to main menu...")
         choose_action() 
@@ -715,7 +718,7 @@ def cancel_booking():
                 elif confirm_action.lower() == 'y':
                     for event in matched_events:
                         event_identifier = event['id']
-                        #bookings_calendar.events().delete(calendarId='primary', eventId=event_identifier).execute()
+                        bookings_calendar.events().delete(calendarId='primary', eventId=event_identifier).execute()
                         print("Booking deleted.")
                         # question user here as to whether they want to see the next name on the waiting list?
                         while True:
@@ -725,7 +728,12 @@ def cancel_booking():
                                 choose_action()
                                 break
                             elif waiting_list_request == 'y':
-                                waiting_list_view(events, matched_events)
+                                selected_client, event_set_to_move, event_id = waiting_list_view(events, matched_events)
+                                print("Waiting list client has been moved")
+                                updated_event = bookings_calendar.events().update(calendarId='primary', eventId=event_id, body=event_set_to_move).execute()
+                                print(updated_event)
+                                print(f"Here are the new details for that booking: ", selected_client)
+                                print("Returning to main menu...")
                                 break
                             else:
                                 print("Invalid input, please enter 'y' or 'n'.")                            

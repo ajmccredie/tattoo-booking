@@ -61,6 +61,7 @@ def obtain_calendar():
             print(start, ":", event['summary'], ".", event['description'], ".")
 
         search_calendar = input("Do you wish to search the calendar for a particular booking? y/n\n")
+        search_calendar = search_calendar.strip().lower()
         if search_calendar.lower() == 'y':
             calendar_search()
         elif search_calendar.lower() == 'n':
@@ -107,7 +108,7 @@ def calendar_search():
         print("b. By artist")
         print("c. By date")
         print("d. Return to main menu")
-        choice = input("Selection: \n").strip()
+        choice = input("Selection: \n").strip().lower()
         if choice.lower() == "a":
             name_matches = search_by_name(events)
             print("The search found the following results...")
@@ -147,6 +148,7 @@ def search_by_name(events):
     User input of name used to filter search results
     """
     search_name = input("Please enter the client name:\n")
+    search_name = search_name.strip()
     matched_by_name = []
     for event in events:
         descriptions = event.get('description', '')
@@ -179,7 +181,12 @@ def search_by_artist(events):
     """
     User input of artist used to filter search results
     """
-    search_artist = input("Please enter the artist name (Kev/Bev):\n")
+    while True:
+        search_artist = input("Please enter the artist name (Kev/Bev):\n")
+        if search_artist in ['Kev', 'Bev']:
+            break
+        else:
+            print("Invalid artist name. Please enter 'Kev' or 'Bev'.")
     matched_by_artist = []
     for event in events:
         summaries = event.get('summary', '')
@@ -255,6 +262,22 @@ def ask_artist_preference():
                 return "No preference"
         else:
             print("Invalid input. Please enter 1, 2 or 3.")
+
+def ask_artist_preference_for_deletion():
+    """
+    Determine, vadildate and return the preferred artist
+    """
+    while True:
+        print("Which artist? 1=Kev, 2=Bev")
+        artist_input = input("Artist selection: \n").strip()
+        # check validity of input and ask again if issue found
+        if artist_input in ['1', '2', '3']:
+            if artist_input == '1':
+                return "Kev"
+            elif artist_input == '2':
+                return "Bev"
+        else:
+            print("Invalid input. Please enter 1 or 2 to choose between (1)Kev and (2)Bev.")
 
 
 def phone_valid(client_phone):
@@ -646,7 +669,7 @@ def cancel_booking():
     A series of validated user inputs to determine, check and delete the unwanted booking
     """
     print("Please provide answers to the following questions to find the booking: ")
-    artist = ask_artist_preference()
+    artist = ask_artist_preference_for_deletion()
     print(artist)
     summary = f"Tattoo with {artist}"
     client_name = input("Please provide the name of the person booked in: \n")

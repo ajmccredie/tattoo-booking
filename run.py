@@ -598,20 +598,30 @@ def waiting_list_view(events, matched_events):
     """
 
     print(f"The booking which is being removed is {matched_events[0]['summary'], matched_events[0]['description']}")
-    # removed_date = 
+    removed_date = datetime.datetime.strptime(matched_events[0]['start']['dateTime'], "%Y-%m-%dT%H:%S%z").date()
     waiting_list_clients = []
     # if a booking is found on that date, the nature of the booking needs to be found
     for event in events:
         summary = event.get('summary', '')
         booked_artist = summary[12:15]
         start_time = event['start'].get('dateTime', event['start'].get('date'))
+        start_hour = event['start'].get('dateTime', event['start'].get('time'))[11:13]
+        print(start_hour)
+        end_time = event['end'].get('dateTime', event['end'].get('time'))[11:13]
+        print(end_time)
+        length = int(end_time) - int(start_hour)
+        if length == 7:
+            tattoo_length = "full day"
+        else:
+            tattoo_length = "half day"
         event_date = datetime.datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S%z").date()
         description = event.get('description','')
         description_split = description.split()
         waiting_boolean = description_split[-1]
-        if waiting_boolean == "True":
+        if waiting_boolean == "True" and event_date > removed_date:
             client_name = description_split[0]
             client_phone = description_split[1]
+            client_tattoo_length = tattoo_length
             waiting_list_clients.append({
                 'name': client_name,
                 'phone': client_phone,
@@ -619,8 +629,10 @@ def waiting_list_view(events, matched_events):
                 'date': event_date
             })            
     print("Here are the next 5 clients on the waiting list:")
-    for client in waiting_list_clients[1:5]:
-        print(f"1. Name: {client['name']} Phone: {client['phone']} Tattoo length: {client['tattoo_length']} Date: {client['date']}")
+    index = 1
+    for client in waiting_list_clients[0:5]:
+        print(f"{index}. Name: {client['name']} Phone: {client['phone']} Tattoo length: {client['tattoo_length']} Date: {client['date']}")
+        index += 1
     return waiting_list_clients
 
 def cancel_booking():
@@ -665,7 +677,7 @@ def cancel_booking():
                 elif confirm_action.lower() == 'y':
                     for event in matched_events:
                         event_identifier = event['id']
-                        bookings_calendar.events().delete(calendarId='primary', eventId=event_identifier).execute()
+                        #bookings_calendar.events().delete(calendarId='primary', eventId=event_identifier).execute()
                         print("Booking deleted.")
                         # question user here as to whether they want to see the next name on the waiting list?
                         while True:

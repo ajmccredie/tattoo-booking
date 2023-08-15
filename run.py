@@ -357,6 +357,14 @@ def calendar_check(date_request, artist):
         if not events:
             print('The whole upcoming calendar is clear of future bookings.')
             return
+
+        # check that the requested date is within a 5 month window from today's date to prevent bookings beyond the scope
+        five_months_time = (datetime.datetime.now() + relativedelta(months=5)).date()
+        requested_date = datetime.datetime.strptime(date_request, "%Y-%m-%d").date()
+        if requested_date > five_months_time:
+            print("Error: The date requested is beyond the booking window of 5 months.\nReturning you to the main menu...")
+            choose_action()
+            return
         
         # set the default for the date to be 'available'
         date_available = True

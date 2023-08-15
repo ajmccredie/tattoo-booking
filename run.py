@@ -626,12 +626,20 @@ def waiting_list_view(events, matched_events):
                 'tattoo_length': client_tattoo_length,
                 'date': event_date
             })            
-    print("Here are the next 5 clients on the waiting list:")
+    print("Here are the next (upto) 5 clients on the waiting list:")
     index = 1
     for client in waiting_list_clients[0:5]:
         print(f"{index}. Name: {client['name']} Phone: {client['phone']} Tattoo length: {client['tattoo_length']} Date: {client['date']}")
         index += 1
-    return waiting_list_clients
+    select_client_for_replacement = input("Select a client from the waiting list to take the cancelled slot by entering the index number (1-5)\n(Select any other key to return to the main menu\n")
+    try:
+        select_index = int(select_client_for_replacement)
+        if 1<= select_index <= min(len(waiting_list_clients), 5):
+            selected_client = waiting_list_clients[select_index - 1]
+            print(f"You've selected: Name: {selected_client['name']} Phone: {selected_client['phone']}")
+    except ValueError:
+        print("Returning to main menu...")
+        choose_action() 
 
 def cancel_booking():
     """

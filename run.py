@@ -53,6 +53,8 @@ def obtain_calendar():
         if not events:
             print('No upcoming events found.')
             return
+        # order any events found chronologically using code inspired from https://www.tutorialspoint.com/How-to-sort-a-Python-date-string-list#:~:text=Method%201%3A%20Using%20sort()%20and%20lambda%20functions&text=Use%20the%20import%20keyword%2C%20to,has%20a%20module%20called%20datetime).&text=Sort%20the%20list%20of%20dates,argument%20as%20the%20lambda%20function.
+        events.sort(key=lambda x: x['start'].get('dateTime', x['start'].get('date')))
         # Prints the start and name of the next 10 events
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))

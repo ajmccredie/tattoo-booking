@@ -597,7 +597,12 @@ def place_booking():
     start = date_and_time[0]
     end = date_and_time[1]
     
-    waiting_list = input("Would the client like to join the waiting list? y/n\n")
+    while True:
+        waiting_list = input("Would the client like to join the waiting list? y/n\n")
+        if waiting_list == 'y' or 'no':
+            break
+        else:
+            print("Invalid input. Please enter 'y' or 'n'.")
     # check validity of input and ask again if issue found
     # age check and wanting to be added to waiting list are stored as a boolean values
     age_appropriate = True if age_check.lower() == 'y' else False
@@ -624,17 +629,21 @@ def place_booking():
         if confirm_booking.lower() == 'y':
             # access the calendar and store the details
             add_to_calendar(client_details)
-            book_another = input("Client booking confirmed.\n Do you wish to continue using the system? y/n\n")
-            if book_another.lower() == 'y':
-                print("Returning to the main menu\n")   
-                choose_action()
-            else:
-                logout_confirm = input("Are you sure you wish to logout of the system? y/n\n")
-                if logout_confirm == 'y':
-                    return
+            while True:
+                book_another = input("Client booking confirmed.\n Do you wish to continue using the system? y/n\n")
+                if book_another == 'y' or 'no':
+                    if book_another.lower() == 'y':
+                        print("Returning to the main menu\n")   
+                        choose_action()
+                    else:
+                        logout_confirm = input("Are you sure you wish to logout of the system? y/n\n")
+                        if logout_confirm == 'y':
+                            return
+                        else:
+                            print("Returning to the main menu\n")   
+                            choose_action()
                 else:
-                    print("Returning to the main menu\n")   
-                    choose_action()
+                    print("Invalid input. Please enter 'y' or 'n'.")
         else:
             print("Please restart the booking procedure")
             choose_action()

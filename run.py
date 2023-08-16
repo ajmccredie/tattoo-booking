@@ -240,7 +240,7 @@ def choose_action():
         else:
             choose_action()
     else:
-        print("\nInvalid function choice. Please select a number between 1 and 5.")
+        print("\nInvalid function choice. Please select a number between 1 and 4.")
         choose_action()
 
 def ask_artist_preference():
@@ -269,7 +269,7 @@ def ask_artist_preference_for_deletion():
         print("Which artist? 1=Kev, 2=Bev")
         artist_input = input("Artist selection: \n").strip()
         # check validity of input and ask again if issue found
-        if artist_input in ['1', '2', '3']:
+        if artist_input in ['1', '2']:
             if artist_input == '1':
                 return "Kev"
             elif artist_input == '2':
@@ -385,6 +385,10 @@ def calendar_check(date_request, artist):
         requested_date = datetime.datetime.strptime(date_request, "%Y-%m-%d").date()
         if requested_date > five_months_time:
             print("Error: The date requested is beyond the booking window of 5 months.\nReturning you to the main menu...")
+            choose_action()
+            return
+        elif requested_date < datetime.datetime.now().date():
+            print("Error: The date requested is in the past.\nReturning you to the main menu...")
             choose_action()
             return
         

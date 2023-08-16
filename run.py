@@ -343,13 +343,14 @@ def assign_artist(events, date_request):
             if booked_artist in busy_artists:
                 busy_artists.remove(booked_artist)
             else:
-                print("Neither artist busy on date selected.")
+                continue
     # Check if anyone/both is free and return information to allow the booking to continue
     if len(busy_artists) == 0:
         return None
     elif len(busy_artists) == 1:
         return busy_artists[0]
     else:
+        print("Neither artist busy on date selected.")
         return random.choice(busy_artists)
 
 
@@ -741,8 +742,9 @@ def cancel_booking():
                     print("Invalid command, unable to complete booking deletion.\n")
                     choose_action()
             else:
-                continue
-        print("If no matching bookings were found, please check your search criteria.\nReturning to main menu...")
+                print("If no matching bookings were found, please check your search criteria.\nReturning to main menu...")
+                choose_action()
+        print("Returning to main menu...")
         choose_action()
     except HttpError as error:
         print('An error occurred: %s' % error)

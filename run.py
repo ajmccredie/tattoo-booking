@@ -222,8 +222,7 @@ def choose_action():
     print("1. Place a booking")
     print("2. Find a booking")
     print("3. Cancel a booking")
-    print("4. Enter a staff working pattern")
-    print("5. Exit the system and logout\n")
+    print("4. Exit the system and logout\n")
     choice = input("Selection: \n")
     if choice == "1":
         print("-----------------------------------------------------------")
@@ -235,8 +234,6 @@ def choose_action():
         print("-----------------------------------------------------------")
         obtain_calendar()
     elif choice == "4":
-        print("Function under construction")
-    elif choice == '5':
         confirm_logout = input("Are you sure you wish to exit the system? y/n\n")
         if confirm_logout.lower() == 'y':
             exit()

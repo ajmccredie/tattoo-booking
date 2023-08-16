@@ -557,16 +557,42 @@ def place_booking():
         print(f"Your artist is confirmed as {assigned_artist}")
     
     # once a date for the booking is found, the rest of the details are obtained
-    client_name = input("Please enter client name: \n")
-    # check validity of input and ask again if issue found
-    age_check = input("Please confirm client is 18 years old or older y/n\n")
-    # check validity of input and ask again if issue found
+    # input the client name
+    while True:
+        client_name = input("Please enter client name (no spaces or non-alphabetical characters please): \n")
+        if client_name.isalpha():
+            break
+        else:
+            print("Invalid input. Please enter a client name with alphabetical characters only.")
+    # check the client age (but will not break booking until later)
+    while True:
+        age_check = input("Please confirm client is 18 years old or older y/n\n")
+        if age_check == 'y' or 'n':
+            if age_check == 'n':
+                continue_anyway = input("Booking will not be able to go ahead, do you wish to continue anyway? y/n\n")
+                while True:
+                    if continue_anyway == 'y' or 'n':
+                        if continue_anyway == 'y':
+                            break
+                        else:
+                            print("Returning to main menu...")
+                            choose_action()
+                    else:
+                        print("Invalid input. Please enter 'y' or 'n'.")
+            break
+        else:
+            print("Invalid input. Please enter 'y' or 'n'.")
+    # phone number entry
     client_phone = input("Please enter client phone number: \n")
     validated_phone = phone_valid(client_phone)
     if validated_phone:
         print("Valid phone number: ", validated_phone)
-    length = input("Is the tattoo a full or half day? ('full'/'half')\n")
-    # check validity of input and ask again if issue found
+    while True:
+        length = input("Is the tattoo a full or half day? ('full'/'half')\n").lower()
+        if length == 'full' or length == 'half':
+            break
+        else:
+            print("Invalid input. Please enter 'full' or 'half'.")    
     date_and_time = convert_date_time_info(length, date_input, time_input)
     start = date_and_time[0]
     end = date_and_time[1]
@@ -665,12 +691,12 @@ def waiting_list_view(events, matched_events):
         if 1<= select_index <= min(len(waiting_list_clients), 5):
             selected_client = waiting_list_clients[select_index - 1]
             print(f"You've selected: Name: {selected_client['name']} Phone: {selected_client['phone']} \nThis booking will be moved into the free slot.")
-            selected_client['start'] = removed_date.strftime('%Y-%m-%dT%H:%M:%SZ') 
+            selected_client["start:{'dateTime'}"] = removed_date.strftime('%Y-%m-%dT%H:%M:%SZ') 
             event_id = event_set_to_move['id']
             if client_tattoo_length == "full day":
-                selected_client['end'] = (removed_date + datetime.timedelta(hours=7)).strftime('%Y-%m-%dT%H:%M:%SZ')
+                selected_client["end:{'dateTime'}"] = (removed_date + datetime.timedelta(hours=7)).strftime('%Y-%m-%dT%H:%M:%SZ')
             elif client_tattoo_length == "half day":
-                selected_client['end'] = (removed_date + datetime.timedelta(hours=4)).strftime('%Y-%m-%dT%H:%M:%SZ')
+                selected_client["end:{'dateTime'}"] = (removed_date + datetime.timedelta(hours=4)).strftime('%Y-%m-%dT%H:%M:%SZ')
             return selected_client, event_set_to_move, event_id
         else:
             print("Invalid selection. No further changes have been made.")
@@ -687,7 +713,6 @@ def cancel_booking():
     print(artist)
     summary = f"Tattoo with {artist}"
     client_name = input("Please provide the name of the person booked in: \n")
-    description = f"{client_name}"
     date_search = input("Please enter the date of the booking (YYYY-MM-DD): \n")
     # search function for appropriate events - use of q query and search parameters adapted from 
     # https://www.jayasekara.blog/2021/07/how-to-search-google-calendar-events-using-python.html
@@ -709,7 +734,6 @@ def cancel_booking():
             event_summary = event.get('summary', '')
             start_time = event['start'].get('dateTime', event['start'].get('date'))[0:10]
             event_client_name = event.get('description', '').split(', ')[0]
-
             if summary in event_summary and date_search == start_time and client_name == event_client_name:
                 matched_events.append(event)
                 print(f"The following booking(s) matching your description has been found: \n", start_time,": ", event['summary'],".", event['description'],".")
@@ -720,7 +744,7 @@ def cancel_booking():
                 elif confirm_action.lower() == 'y':
                     for event in matched_events:
                         event_identifier = event['id']
-                        bookings_calendar.events().delete(calendarId='primary', eventId=event_identifier).execute()
+                        #bookings_calendar.events().delete(calendarId='primary', eventId=event_identifier).execute()
                         print("Booking deleted.")
                         # question user here as to whether they want to see the next name on the waiting list?
                         while True:
@@ -732,9 +756,12 @@ def cancel_booking():
                             elif waiting_list_request == 'y':
                                 selected_client, event_set_to_move, event_id = waiting_list_view(events, matched_events)
                                 print("Waiting list client has been moved")
+                                print(event_set_to_move)
+                                print(event_id)
+                                print(selected_client)
                                 updated_event = bookings_calendar.events().update(calendarId='primary', eventId=event_id, body=event_set_to_move).execute()
                                 print(updated_event)
-                                print(f"Here are the new details for that booking: ", selected_client)
+                                print(f"Here are the new details for that booking: ", updated_event['start'], ":", updated_event['summary'], updated_event['description'])
                                 print("Returning to main menu...")
                                 break
                             else:
@@ -742,9 +769,9 @@ def cancel_booking():
                 else:
                     print("Invalid command, unable to complete booking deletion.\n")
                     choose_action()
-            else:
-                print("If no matching bookings were found, please check your search criteria.\nReturning to main menu...")
-                choose_action()
+        else:
+            print("If no matching bookings were found, please check your search criteria.\nReturning to main menu...")
+            choose_action()
         print("Returning to main menu...")
         choose_action()
     except HttpError as error:

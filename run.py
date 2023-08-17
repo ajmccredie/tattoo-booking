@@ -25,6 +25,10 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive"
 ]
+CREDS = None
+SCOPED_CREDS = None
+CREDS = Credentials.from_service_account_file('eicreds.json')
+SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 
 
 def obtain_calendar():
@@ -35,15 +39,6 @@ def obtain_calendar():
     Prints the start and name of the next 10 events on the 
     user's calendar.
     """
-    CREDS = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('eicreds.json'):
-        CREDS = Credentials.from_service_account_file('eicreds.json')
-        SCOPED_CREDS = CREDS.with_scopes(SCOPE)
-    else:
-        print("Sorry, unable to access the calendar")
     # try/except statement to access the calendar, allowing for a program break
     # if a problem is found
     try:
@@ -99,16 +94,6 @@ def calendar_search():
     """
     Accesses all of the information available in the calendar in order to allow searches
     """
-    CREDS = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('eicreds.json'):
-        CREDS = Credentials.from_service_account_file('eicreds.json')
-        SCOPED_CREDS = CREDS.with_scopes(SCOPE)
-    else:
-        print("Sorry, unable to access the calendar")
-    
     # try/except statement to access the calendar, allowing for a program break
     # if a problem is found
     try:
@@ -725,6 +710,8 @@ def waiting_list_view(events, matched_events):
         select_index = int(select_client_for_replacement)
         if 1<= select_index <= min(len(waiting_list_clients), 5):
             selected_client = waiting_list_clients[select_index - 1]
+            print(selected_client)
+            event_set_to_move = event
             print(f"You've selected: Name: {selected_client['name']} Phone: {selected_client['phone']} \nThis booking will be moved into the free slot.")
             selected_client["start"] = removed_date.strftime('%Y-%m-%d')
             selected_client["end"] = removed_date.strftime('%Y-%m-%d') 
@@ -789,13 +776,9 @@ def cancel_booking():
                             elif waiting_list_request == 'y':
                                 selected_client, event_id = waiting_list_view(events, matched_events)
                                 print("Waiting list client has been moved")
-                                print(event_id)
-                                print(selected_client)
                                 tattoo_length_string = selected_client.get("tattoo_length", "")
                                 length = tattoo_length_string[0:4]
-                                print(length)
                                 date_request = selected_client["start"]
-                                print(date_request)
                                 time_input = 11
                                 selected_client["start"], selected_client["end"] = convert_date_time_info(length, date_request, time_input)
                                 # ensure the details for the replacement_client are formatted for the routine
@@ -809,7 +792,6 @@ def cancel_booking():
                                     'waiting': selected_client['waiting']
                                 }
                                 updated_event = add_to_calendar(replacement_client)
-                                print(updated_event)
                                 print(f"Here are the new details for that booking: {updated_event['start']}: {updated_event['summary']}, {updated_event['description']}")
                                 print("Deleting the altered booking")
                                 bookings_calendar.events().delete(calendarId='primary', eventId=event_id).execute()

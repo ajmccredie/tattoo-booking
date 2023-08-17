@@ -59,7 +59,7 @@ def obtain_calendar():
             events = events_result.get('items', [])
             if not events:
                 print('No upcoming events found.')
-                return
+                continue
             artist_events = []
             for event in events:
                 event_summary = event.get('summary', '')
@@ -67,18 +67,17 @@ def obtain_calendar():
                 event_start = event['start'].get('dateTime', event['start'].get('date'))
                 if artist in event_summary:
                     if 'T' in event_start:
-                        event_start_details = datetime.datetime.strptime(event_start, "%Y-%m-%dT%H:%M:%SZ").date()
-                        artist_events.append((event_summary, event_description, event_start_details))        
+                        event_start_details = datetime.datetime.strptime(event_start, "%Y-%m-%dT%H:%M:%SZ").date()       
                     else:
-                        event_start = datetime.datetime.strptime(event_start, "%Y-%m-%d").date()
-                        artist_events.append((event_summary, event_description, event_start_details))  
+                        event_start_details = datetime.datetime.strptime(event_start, "%Y-%m-%d").date()
+                    artist_events.append((event_summary, event_description, event_start_details))  
         all_events.extend(artist_events)
         # order any events found chronologically using code inspired from https://www.tutorialspoint.com/How-to-sort-a-Python-date-string-list#:~:text=Method%201%3A%20Using%20sort()%20and%20lambda%20functions&text=Use%20the%20import%20keyword%2C%20to,has%20a%20module%20called%20datetime).&text=Sort%20the%20list%20of%20dates,argument%20as%20the%20lambda%20function.
         # sorting the tuple from https://docs.python.org/3/howto/sorting.html
-        all_events.sort(key=lambda x: x[1])
+        all_events.sort(key=lambda x: x[0])
         # Prints the start and name of the next 10 events
-        for event_summary, event_date in all_events[:10]:
-            print(f"{event_date}: {event_summary}. {event_description}.")
+        for event_start_details, event_summary, event_description in all_events[:10]:
+            print(f"{event_start_details}: {event_summary}. {event_description}.")
 
         search_calendar = input("Do you wish to search the calendar for a particular booking? y/n\n")
         search_calendar = search_calendar.strip().lower()

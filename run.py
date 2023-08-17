@@ -503,6 +503,7 @@ def add_to_calendar(client_details):
 
         # insert the event into the calendar
         event = bookings_calendar.events().insert(calendarId='primary', body=event).execute()
+        return event
         print('Event created: %s' % event.get('htmlLink'))
 
     except HttpError as error:
@@ -638,7 +639,7 @@ def place_booking():
                     else:
                         logout_confirm = input("Are you sure you wish to logout of the system? y/n\n")
                         if logout_confirm == 'y':
-                            return
+                            exit()
                         else:
                             print("Returning to the main menu\n")   
                             choose_action()
@@ -683,11 +684,14 @@ def waiting_list_view(events, matched_events):
             client_name = description_split[0]
             client_phone = description_split[1]
             client_tattoo_length = tattoo_length
+            waiting = True
             waiting_list_clients.append({
+                'artist': booked_artist,
                 'name': client_name,
                 'phone': client_phone,
                 'tattoo_length': client_tattoo_length,
-                'start': event_date
+                'start': event_date,
+                'waiting': waiting
             })            
     print("Here are the next (upto) 5 clients on the waiting list for the same artist:")
     index = 1
@@ -703,10 +707,6 @@ def waiting_list_view(events, matched_events):
             selected_client["start"] = removed_date.strftime('%Y-%m-%d')
             selected_client["end"] = removed_date.strftime('%Y-%m-%d') 
             event_id = event_set_to_move['id']
-            #if client_tattoo_length == "full day":
-            #    selected_client["end"] = (removed_date + datetime.timedelta(hours=7)).strftime('%Y-%m-%d')
-            #elif client_tattoo_length == "half day":
-            #    selected_client["end"] = (removed_date + datetime.timedelta(hours=4)).strftime('%Y-%m-%d')
             return selected_client, event_set_to_move, event_id
         else:
             print("Invalid selection. No further changes have been made.")
@@ -754,7 +754,7 @@ def cancel_booking():
                 elif confirm_action.lower() == 'y':
                     for event in matched_events:
                         event_identifier = event['id']
-                        #bookings_calendar.events().delete(calendarId='primary', eventId=event_identifier).execute()
+                        bookings_calendar.events().delete(calendarId='primary', eventId=event_identifier).execute()
                         print("Booking deleted.")
                         # question user here as to whether they want to see the next name on the waiting list?
                         while True:
@@ -766,32 +766,43 @@ def cancel_booking():
                             elif waiting_list_request == 'y':
                                 selected_client, event_set_to_move, event_id = waiting_list_view(events, matched_events)
                                 print("Waiting list client has been moved")
-                                print(event_set_to_move)
                                 print(event_id)
                                 print(selected_client)
                                 tattoo_length_string = selected_client.get("tattoo_length", "")
-                                length = tattoo_length_string[0]
+                                length = tattoo_length_string[0:4]
                                 print(length)
                                 date_request = selected_client["start"]
                                 print(date_request)
                                 time_input = 11
                                 selected_client["start"], selected_client["end"] = convert_date_time_info(length, date_request, time_input)
-                                updated_event = add_to_calendar(selected_client)
-                                #updated_event = bookings_calendar.events().update(calendarId='primary', eventId=event_id, body=event_set_to_move).execute()
+                                # ensure the details for the replacement_client are formatted for the routine
+                                replacement_client = {
+                                    'artist': selected_client['artist'],
+                                    'name': selected_client['name'].replace(',', ''),
+                                    'phone': selected_client['phone'].replace(',', ''),
+                                    'start': selected_client['start'],
+                                    'end': selected_client['end'],
+                                    'length': length,
+                                    'waiting': selected_client['waiting']
+                                }
+                                updated_event = add_to_calendar(replacement_client)
                                 print(updated_event)
-                                print(f"Here are the new details for that booking: ", updated_event['start'], ":", updated_event['summary'], updated_event['description'])
+                                print(f"Here are the new details for that booking: {updated_event['start']}: {updated_event['summary']}, {updated_event['description']}")
+                                print("Deleting the altered booking")
+                                bookings_calendar.events().delete(calendarId='primary', eventId=event_id).execute()
                                 print("Returning to main menu...")
+                                choose_action()
                                 break
                             else:
                                 print("Invalid input, please enter 'y' or 'n'.")                            
                 else:
                     print("Invalid command, unable to complete booking deletion.\n")
                     choose_action()
+                    break
         else:
-            print("If no matching bookings were found, please check your search criteria.\nReturning to main menu...")
+            print("No matching bookings were found, please check your search criteria.\nReturning to main menu...")
             choose_action()
-        print("Returning to main menu...")
-        choose_action()
+            break
     except HttpError as error:
         print('An error occurred: %s' % error)
 

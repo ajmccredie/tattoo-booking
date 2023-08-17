@@ -57,20 +57,23 @@ def obtain_calendar():
             if not events:
                 print('No upcoming events found.')
                 return
-        for event in events:
-            event_summary = event.get('summary', '')
-            event_start = event['start'].get('dateTime', event['start'].get('date'))
-            if artist in event_summary:
-                if 'T' in event_start:
-                    event_start_details = datetime.datetime.strptime(event_start, "%Y-%m-%dT%H:%M:%SZ").date()
-                    all_events.append((event_summary, event_start_details))        
-                else:
-                    event_start = datetime.datetime.strptime(event_start, "%Y-%m-%d").date()
-                    all_events.append((event_summary, event_start_details))  
+            artist_events = []
+            for event in events:
+                event_summary = event.get('summary', '')
+                event_start = event['start'].get('dateTime', event['start'].get('date'))
+                if artist in event_summary:
+                    if 'T' in event_start:
+                        event_start_details = datetime.datetime.strptime(event_start, "%Y-%m-%dT%H:%M:%SZ").date()
+                        artist_events.append((event_summary, event_start_details))        
+                    else:
+                        event_start = datetime.datetime.strptime(event_start, "%Y-%m-%d").date()
+                        artist_events.append((event_summary, event_start_details))  
+        all_events.extend(artist_events)
         # order any events found chronologically using code inspired from https://www.tutorialspoint.com/How-to-sort-a-Python-date-string-list#:~:text=Method%201%3A%20Using%20sort()%20and%20lambda%20functions&text=Use%20the%20import%20keyword%2C%20to,has%20a%20module%20called%20datetime).&text=Sort%20the%20list%20of%20dates,argument%20as%20the%20lambda%20function.
-        all_events.sort(key=lambda x: x['start'].get('dateTime', x['start'].get('date')))
+        # sorting the tuple from https://docs.python.org/3/howto/sorting.html
+        all_events.sort(key=lambda x: x[1])
         # Prints the start and name of the next 10 events
-        for all_events[:10]:
+        for event_summary, event_date in all_events[:10]:
             print(f"{event_start}: {event['summary']}. {event['description']}.")
 
         search_calendar = input("Do you wish to search the calendar for a particular booking? y/n\n")

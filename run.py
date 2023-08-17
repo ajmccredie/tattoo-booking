@@ -25,8 +25,6 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive"
 ]
-CREDS = None
-SCOPED_CREDS = None
 CREDS = Credentials.from_service_account_file('eicreds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 

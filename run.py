@@ -368,17 +368,6 @@ def calendar_check(date_request, artist):
     Returns whether that date is free, the next available date with that artist
     And whether not the other artist is free on the date selected.
     """
-    # Calendar is called the same way as in other bits of calendar access code
-    CREDS = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('eicreds.json'):
-        CREDS = Credentials.from_service_account_file('eicreds.json')
-        SCOPED_CREDS = CREDS.with_scopes(SCOPE)
-    else:
-        print("Sorry, unable to access the calendar")
-    
     # try/except statement to access the calendar, allowing for a program break
     # if a problem is found
     try:
@@ -474,16 +463,6 @@ def add_to_calendar(client_details):
     """
     Brings in the access code from obtain_calendar and allows an event to be written
     """
-    CREDS = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('eicreds.json'):
-        CREDS = Credentials.from_service_account_file('eicreds.json')
-        SCOPED_CREDS = CREDS.with_scopes(SCOPE)
-    else:
-        print("Sorry, unable to access the calendar")
-    
     # try/except statement to access the calendar, allowing for a program break
     # if a problem is found
     try:
@@ -734,12 +713,7 @@ def cancel_booking():
     date_search = input("Please enter the date of the booking (YYYY-MM-DD): \n")
     # search function for appropriate events - use of q query and search parameters adapted from 
     # https://www.jayasekara.blog/2021/07/how-to-search-google-calendar-events-using-python.html
-    if os.path.exists('eicreds.json'):
-        CREDS = Credentials.from_service_account_file('eicreds.json')
-        SCOPED_CREDS = CREDS.with_scopes(SCOPE)
-    else:
-        print("Sorry, unable to access the calendar")
-    
+
     try:
         # access the calendar in order to search
         bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)

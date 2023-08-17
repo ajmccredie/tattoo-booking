@@ -8,3 +8,4 @@ node_modules/
 .github/
 user_login.txt
 eicreds.json
+creds.json

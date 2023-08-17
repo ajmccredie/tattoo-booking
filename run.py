@@ -700,12 +700,13 @@ def waiting_list_view(events, matched_events):
         if 1<= select_index <= min(len(waiting_list_clients), 5):
             selected_client = waiting_list_clients[select_index - 1]
             print(f"You've selected: Name: {selected_client['name']} Phone: {selected_client['phone']} \nThis booking will be moved into the free slot.")
-            selected_client["start:{'dateTime'}"] = removed_date.strftime('%Y-%m-%dT%H:%M:%SZ') 
+            selected_client["start"] = removed_date.strftime('%Y-%m-%d')
+            selected_client["end"] = removed_date.strftime('%Y-%m-%d') 
             event_id = event_set_to_move['id']
-            if client_tattoo_length == "full day":
-                selected_client["end:{'dateTime'}"] = (removed_date + datetime.timedelta(hours=7)).strftime('%Y-%m-%dT%H:%M:%SZ')
-            elif client_tattoo_length == "half day":
-                selected_client["end:{'dateTime'}"] = (removed_date + datetime.timedelta(hours=4)).strftime('%Y-%m-%dT%H:%M:%SZ')
+            #if client_tattoo_length == "full day":
+            #    selected_client["end"] = (removed_date + datetime.timedelta(hours=7)).strftime('%Y-%m-%d')
+            #elif client_tattoo_length == "half day":
+            #    selected_client["end"] = (removed_date + datetime.timedelta(hours=4)).strftime('%Y-%m-%d')
             return selected_client, event_set_to_move, event_id
         else:
             print("Invalid selection. No further changes have been made.")
@@ -768,7 +769,15 @@ def cancel_booking():
                                 print(event_set_to_move)
                                 print(event_id)
                                 print(selected_client)
-                                updated_event = bookings_calendar.events().update(calendarId='primary', eventId=event_id, body=event_set_to_move).execute()
+                                tattoo_length_string = selected_client.get("tattoo_length", "")
+                                length = tattoo_length_string[0]
+                                print(length)
+                                date_request = selected_client["start"]
+                                print(date_request)
+                                time_input = 11
+                                selected_client["start"], selected_client["end"] = convert_date_time_info(length, date_request, time_input)
+                                updated_event = add_to_calendar(selected_client)
+                                #updated_event = bookings_calendar.events().update(calendarId='primary', eventId=event_id, body=event_set_to_move).execute()
                                 print(updated_event)
                                 print(f"Here are the new details for that booking: ", updated_event['start'], ":", updated_event['summary'], updated_event['description'])
                                 print("Returning to main menu...")

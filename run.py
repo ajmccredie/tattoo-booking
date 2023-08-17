@@ -6,7 +6,9 @@ from __future__ import print_function
 
 import datetime
 import os.path
-# import pandas to handle the date/time information (suggested from medium.com/swlh/convert-any-dates-in-spreadsheets-using-python)
+# import pandas to handle the date/time information 
+# (suggested from medium.com/swlh/convert-any-dates-in-spreadsheets
+# -using-python)
 import pandas as pd
 import random
 
@@ -27,9 +29,11 @@ SCOPE = [
 
 def obtain_calendar():
     """Shows basic usage of the Google Calendar API. 
-    This code is an adapted mix of code from google Workspace (Python for developers)
+    This code is an adapted mix of code from google 
+    Workspace (Python for developers)
     and CI's Love-Sandwiches.
-    Prints the start and name of the next 10 events on the user's calendar.
+    Prints the start and name of the next 10 events on the 
+    user's calendar.
     """
     CREDS = None
     # The file token.json stores the user's access and refresh tokens, and is
@@ -40,7 +44,6 @@ def obtain_calendar():
         SCOPED_CREDS = CREDS.with_scopes(SCOPE)
     else:
         print("Sorry, unable to access the calendar")
-    
     # try/except statement to access the calendar, allowing for a program break
     # if a problem is found
     try:
@@ -74,7 +77,7 @@ def obtain_calendar():
         all_events.sort(key=lambda x: x[1])
         # Prints the start and name of the next 10 events
         for event_summary, event_date in all_events[:10]:
-            print(f"{event_start}: {event['summary']}. {event['description']}.")
+            print(f"{event_date}: {event_summary}. {event['description']}.")
 
         search_calendar = input("Do you wish to search the calendar for a particular booking? y/n\n")
         search_calendar = search_calendar.strip().lower()
@@ -90,6 +93,7 @@ def obtain_calendar():
             return
     except HttpError as error:
         print('An error occurred: %s' % error)
+
 
 def calendar_search():
     """
@@ -153,9 +157,9 @@ def calendar_search():
             choose_action()
         else:
             print("Invalid input. Please try again.")
-            calendar_search(events)
+            calendar_search()
     except HttpError as error:
-            print('An error occurred: %s' % error)
+        print('An error occurred: %s' % error)
     return        
 
 
@@ -173,6 +177,7 @@ def search_by_name(events):
         if name.lower() == search_name.lower():
             matched_by_name.append(event)
     return matched_by_name
+
 
 def search_by_date(events):
     """
@@ -192,6 +197,7 @@ def search_by_date(events):
         if date == search_date_input:
             matched_by_date.append(event)
     return matched_by_date
+
 
 def search_by_artist(events):
     """
@@ -231,7 +237,11 @@ def login():
                 print("Invalid username or password, please try again")
             # this will need changing to a while loop at some point    
 
+
 def choose_action():
+    """
+    The main menu code
+    """
     print("-----------------------------------------------------------")
     print("Please select from the following options by typing the number:")
     print("1. Place a booking")
@@ -258,6 +268,7 @@ def choose_action():
         print("\nInvalid function choice. Please select a number between 1 and 4.")
         choose_action()
 
+
 def ask_artist_preference():
     """
     Determine, vadildate and return the preferred artist
@@ -275,6 +286,7 @@ def ask_artist_preference():
                 return "No preference"
         else:
             print("Invalid input. Please enter 1, 2 or 3.")
+
 
 def ask_artist_preference_for_deletion():
     """
@@ -338,6 +350,7 @@ def convert_date_time_info(length, date_input, time_input):
         return
     end = f"{date_input} {ending}:00"
     return (start, end)
+
 
 def assign_artist(events, date_request):
     """ 
@@ -421,8 +434,6 @@ def calendar_check(date_request, artist):
             assigned_artist = artist
 
         # Determines the next available date for both artists
-        busy_artists = ["Kev", "Bev"]
-        
         # set a default to be returned
         next_date_kev = None
         next_date_bev = None
@@ -450,14 +461,12 @@ def calendar_check(date_request, artist):
             summary = event.get('summary', '')
             booked_artist = summary[12:15]
             start_time = event['start'].get('dateTime', event['start'].get('date'))
-            event_date = datetime.datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S%z").date()
             # Compare to requested date (assuming every booking is a full day at this point)
             if date_request == start_time:
                 if artist == booked_artist:
                     date_available = False
                 else:
-                    continue
-            
+                    continue          
             earliest_totally_free_date = completely_free_dates[0]
                 
             if not booked_artist == "Kev" and not next_date_kev:
@@ -475,7 +484,7 @@ def calendar_check(date_request, artist):
         return date_available, next_date_kev, next_date_bev, assigned_artist
 
     except HttpError as error:
-            print('An error occurred: %s' % error)
+        print('An error occurred: %s' % error)
 
 
 def add_to_calendar(client_details):
@@ -498,7 +507,6 @@ def add_to_calendar(client_details):
         bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)
 
         # Call the Calendar API
-        now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
         start_time = datetime.datetime.strptime(client_details['start'], '%Y-%m-%d %H:%M').isoformat()
         end_time = datetime.datetime.strptime(client_details['end'], '%Y-%m-%d %H:%M').isoformat()
 
@@ -518,11 +526,11 @@ def add_to_calendar(client_details):
 
         # insert the event into the calendar
         event = bookings_calendar.events().insert(calendarId='primary', body=event).execute()
-        return event
         print('Event created: %s' % event.get('htmlLink'))
-
+        return event
     except HttpError as error:
         print('An error occurred: %s' % error)
+
 
 def place_booking():
     """
@@ -542,7 +550,7 @@ def place_booking():
     date_available, kev_next_date, bev_next_date, assigned_artist = calendar_check(date_input, artist)
     if assigned_artist is not None:
         print(f"Your assigned artist for the booking is {assigned_artist}")
-    if date_available == False:
+    if date_available is False:
         print("This date is unavailable, please select another date/artist (next available shown): \n")
     else:
         print("The date you selected is free and will be used in the booking.\n-------\nFor information, the next available dates are also shown:")
@@ -550,7 +558,7 @@ def place_booking():
     print(f"The next available date for Bev is:  {bev_next_date}")
     print("-------")
     # need to add the code here to link to the calendar and check dates
-    while date_available == False:
+    while date_available is False:
         print("You will need to select another date for that artist to continue your booking (press 'n' to be directed to new date input)\n")
         leave_booking = input("Do you wish to return to the main menu? y/n\n")
         if leave_booking == 'y':
@@ -624,7 +632,7 @@ def place_booking():
     age_appropriate = True if age_check.lower() == 'y' else False
     waiting = True if waiting_list.lower() == 'y' else False
 
-    if age_appropriate == False:
+    if age_appropriate is False:
         print("Unable to place booking, clients must be aged 18 or older. Returning to main booking programme...")
         choose_action()
         return
@@ -695,7 +703,6 @@ def waiting_list_view(events, matched_events):
         description_split = description.split()
         waiting_boolean = description_split[-1]
         if waiting_boolean == "True" and event_date > removed_date and removed_artist == booked_artist:
-            event_set_to_move = event
             client_name = description_split[0]
             client_phone = description_split[1]
             client_tattoo_length = tattoo_length
@@ -722,12 +729,13 @@ def waiting_list_view(events, matched_events):
             selected_client["start"] = removed_date.strftime('%Y-%m-%d')
             selected_client["end"] = removed_date.strftime('%Y-%m-%d') 
             event_id = event_set_to_move['id']
-            return selected_client, event_set_to_move, event_id
+            return selected_client, event_id
         else:
             print("Invalid selection. No further changes have been made.")
     except ValueError:
         print("Returning to main menu...")
         choose_action() 
+
 
 def cancel_booking():
     """
@@ -779,7 +787,7 @@ def cancel_booking():
                                 choose_action()
                                 break
                             elif waiting_list_request == 'y':
-                                selected_client, event_set_to_move, event_id = waiting_list_view(events, matched_events)
+                                selected_client, event_id = waiting_list_view(events, matched_events)
                                 print("Waiting list client has been moved")
                                 print(event_id)
                                 print(selected_client)

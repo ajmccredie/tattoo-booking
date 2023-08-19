@@ -111,6 +111,8 @@ def calendar_search():
             for name_match in name_matches:
                 start = name_match['start'].get('dateTime', name_match['start'].get('date'))
                 print(start, ":", name_match['summary'], ".", name_match['description'], ".")
+            if not name_matches:
+                print("[No matches found for that name]")
             print("Returning to bookings menu...\n")
             choose_action()
         elif choice.lower() == "b":
@@ -119,6 +121,8 @@ def calendar_search():
             for artist_match in artist_matches:
                 start = artist_match['start'].get('dateTime', artist_match['start'].get('date'))
                 print(start, ":", artist_match['summary'], ".", artist_match['description'], ".")
+            if not artist_matches:
+                print("[No matches found for that artist]")
             print("Returning to bookings menu...\n")
             choose_action()
         elif choice.lower() == "c":
@@ -127,6 +131,8 @@ def calendar_search():
             for date_match in date_matches:
                 start = date_match['start'].get('dateTime', date_match['start'].get('date'))
                 print(start, ":", date_match['summary'], ".", date_match['description'], ".")
+            if not date_matches:
+                print("[No matches found for that date]")
             print("Returning to bookings menu...\n")
             choose_action()
         elif choice.lower() == "d":
@@ -152,8 +158,6 @@ def search_by_name(events):
         name = description_split[0]
         if name.lower() == search_name.lower():
             matched_by_name.append(event)
-        else: 
-            print("[No matches for the name given]")
     return matched_by_name
 
 
@@ -174,8 +178,6 @@ def search_by_date(events):
         # check date
         if date == search_date_input:
             matched_by_date.append(event)
-        else: 
-            print("[No matches for the date given]")
     return matched_by_date
 
 
@@ -662,6 +664,7 @@ def waiting_list_view(events, matched_events):
             tattoo_length = "half day"
         event_date = datetime.datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S%z").date()
         description = event.get('description','')
+        event_id = event.get('id')
         description_split = description.split()
         waiting_boolean = description_split[-1]
         if waiting_boolean == "True" and event_date > removed_date and removed_artist == booked_artist:
@@ -675,7 +678,8 @@ def waiting_list_view(events, matched_events):
                 'phone': client_phone,
                 'tattoo_length': client_tattoo_length,
                 'start': event_date,
-                'waiting': waiting
+                'waiting': waiting,
+                'id': event_id
             })            
     print("Here are the next (upto) 5 clients on the waiting list for the same artist:")
     index = 1
@@ -687,13 +691,12 @@ def waiting_list_view(events, matched_events):
         select_index = int(select_client_for_replacement)
         if 1<= select_index <= min(len(waiting_list_clients), 5):
             selected_client = waiting_list_clients[select_index - 1]
-            print(selected_client)
-            event_set_to_move = event
+            event_set_to_move = selected_client
+            date_to_be_deleted = selected_client['start']
             print(f"You've selected: Name: {selected_client['name']} Phone: {selected_client['phone']} \nThis booking will be moved into the free slot.")
             selected_client["start"] = removed_date.strftime('%Y-%m-%d')
             selected_client["end"] = removed_date.strftime('%Y-%m-%d') 
-            event_id = event_set_to_move['id']
-            return selected_client, event_id
+            return selected_client, event_set_to_move, date_to_be_deleted
         else:
             print("Invalid selection. No further changes have been made.")
     except ValueError:
@@ -721,13 +724,13 @@ def cancel_booking():
         # access the calendar in order to search
         bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)
         events_result = bookings_calendar.events().list(calendarId='primary').execute()
-        events = events_result.get('items', [])
-        
+        events = events_result.get('items', []) 
         # filter all the results obtained to just the ones matching the search criteria
         matched_events = []
         for event in events:
             event_summary = event.get('summary', '')
             start_time = event['start'].get('dateTime', event['start'].get('date'))[0:10]
+            deleted_event_start = start_time
             event_client_name = event.get('description', '').split(', ')[0]
             if summary in event_summary and date_search == start_time and client_name == event_client_name:
                 matched_events.append(event)
@@ -749,7 +752,7 @@ def cancel_booking():
                                 choose_action()
                                 break
                             elif waiting_list_request == 'y':
-                                selected_client, event_id = waiting_list_view(events, matched_events)
+                                selected_client, event_set_to_move, date_to_be_deleted = waiting_list_view(events, matched_events)
                                 print("Waiting list client has been moved")
                                 tattoo_length_string = selected_client.get("tattoo_length", "")
                                 length = tattoo_length_string[0:4]
@@ -769,8 +772,8 @@ def cancel_booking():
                                 updated_event = add_to_calendar(replacement_client)
                                 print(f"Here are the new details for that booking: {updated_event['start']}: {updated_event['summary']}, {updated_event['description']}")
                                 print("Deleting the altered booking")
-                                
-                                bookings_calendar.events().delete(calendarId='primary', eventId=event_id).execute()
+                                previous_event_id = selected_client['id']
+                                bookings_calendar.events().delete(calendarId='primary', eventId=previous_event_id).execute()
                                 print("Returning to main menu...")
                                 choose_action()
                                 break
@@ -788,7 +791,7 @@ def cancel_booking():
 
 
 def main():
-    login()
+    #login()
     choose_action()
 
 # run the main programme on launch

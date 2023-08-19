@@ -794,7 +794,9 @@ def main():
         if logged_in:
             choose_action()
         else:
-            print("You are not logged in.")
+            choice = input("You are not logged in. Do you want to log in again? y/n")
+            if choice.lower() != 'y':
+                break
 
 # run the main programme on launch
 if __name__ == '__main__':

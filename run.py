@@ -213,12 +213,13 @@ def login():
             for line in file:
                 valid_username, correct_password = line.strip().split(":")
                 if username == valid_username and password == correct_password:
+                    print("-----------------------------------------------------------")
                     print("Login successful. Welcome to your booking system!")
+                    choose_action()
                     break
                 else:
                     print("Invalid username or password, please try again") 
-                    continue
-        break 
+                    continue 
 
 
 def choose_action():

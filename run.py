@@ -216,7 +216,7 @@ def login():
             print("-----------------------------------------------------------")
             print("Login successful. Welcome to your booking system!")
             choose_action()
-             break
+            break
         else:
             print("Invalid username or password, please try again") 
             continue 

@@ -1,14 +1,8 @@
-
-# Write your code to expect a terminal of 80 characters wide and 24 rows high
-
 # Calendar access code from Google Workspace:
 from __future__ import print_function
 
 import datetime
 import os.path
-# import pandas to handle the date/time information 
-# (suggested from medium.com/swlh/convert-any-dates-in-spreadsheets
-# -using-python)
 import pandas as pd
 import random
 
@@ -41,7 +35,6 @@ def obtain_calendar():
     # if a problem is found
     try:
         bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)
-
         # Call the Calendar API
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
         print('Getting the upcoming 10 events:')
@@ -65,7 +58,8 @@ def obtain_calendar():
                         event_start_details = datetime.datetime.strptime(event_start, "%Y-%m-%d").date()
                     artist_events.append((event_start_details, event_summary, event_description))  
             all_events.extend(artist_events)
-        # order any events found chronologically using code inspired from https://www.tutorialspoint.com/How-to-sort-a-Python-date-string-list#:~:text=Method%201%3A%20Using%20sort()%20and%20lambda%20functions&text=Use%20the%20import%20keyword%2C%20to,has%20a%20module%20called%20datetime).&text=Sort%20the%20list%20of%20dates,argument%20as%20the%20lambda%20function.
+        # order any events found chronologically using code inspired from 
+        # https://www.tutorialspoint.com/How-to-sort-a-Python-date-string-list#:~:text=Method%201%3A%20Using%20sort()%20and%20lambda%20functions&text=Use%20the%20import%20keyword%2C%20to,has%20a%20module%20called%20datetime).&text=Sort%20the%20list%20of%20dates,argument%20as%20the%20lambda%20function.
         # sorting the tuple from https://docs.python.org/3/howto/sorting.html
         all_events.sort(key=lambda x: (x[0], x[1]))
         # Prints the start and name of the next 10 events
@@ -96,7 +90,6 @@ def calendar_search():
     # if a problem is found
     try:
         bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)
-
         # Call the Calendar API
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
         events_result = bookings_calendar.events().list(calendarId='primary', timeMin=now, singleEvents=True).execute()
@@ -159,6 +152,8 @@ def search_by_name(events):
         name = description_split[0]
         if name.lower() == search_name.lower():
             matched_by_name.append(event)
+        else: 
+            print("[No matches for the name given]")
     return matched_by_name
 
 
@@ -179,6 +174,8 @@ def search_by_date(events):
         # check date
         if date == search_date_input:
             matched_by_date.append(event)
+        else: 
+            print("[No matches for the date given]")
     return matched_by_date
 
 
@@ -204,21 +201,24 @@ def search_by_artist(events):
 
 # ask for username and password to be entered
 def login():
-    username = input("Please enter your username: \n")
-    password = input("Please enter your password: \n")
+    print("You are currently logged out of the Eternal Ink Booking System.")
+    print("Please enter your admin username and password as instructed.")
+    while True:
+        username = input("Please enter your username: \n")
+        password = input("Please enter your password: \n")
 
-# open the user_login secure file in 'read' and check whether
-# credentials are accurate
-
-    with open("user_login.txt", "r") as file:
-        for line in file:
-            valid_username, correct_password = line.strip().split(":")
-            if username == valid_username and password == correct_password:
-                print("Login successful. Welcome to your booking system!")
-                return
-            else:
-                print("Invalid username or password, please try again")
-            # this will need changing to a while loop at some point    
+    # open the user_login secure file in 'read' and check whether
+    # credentials are accurate
+        with open("user_login.txt", "r") as file:
+            for line in file:
+                valid_username, correct_password = line.strip().split(":")
+                if username == valid_username and password == correct_password:
+                    print("Login successful. Welcome to your booking system!")
+                    break
+                else:
+                    print("Invalid username or password, please try again") 
+                    continue
+        break 
 
 
 def choose_action():
@@ -226,6 +226,7 @@ def choose_action():
     The main menu code
     """
     print("-----------------------------------------------------------")
+    print("The Eternal Ink Booking Calendar")
     print("Please select from the following options by typing the number:")
     print("1. Place a booking")
     print("2. Find a booking")
@@ -467,7 +468,6 @@ def add_to_calendar(client_details):
     # if a problem is found
     try:
         bookings_calendar = build('calendar', 'v3', credentials=SCOPED_CREDS)
-
         # Call the Calendar API
         start_time = datetime.datetime.strptime(client_details['start'], '%Y-%m-%d %H:%M').isoformat()
         end_time = datetime.datetime.strptime(client_details['end'], '%Y-%m-%d %H:%M').isoformat()
@@ -648,7 +648,7 @@ def waiting_list_view(events, matched_events):
     removed_artist = matched_events[0]['summary'][12:15]
     print(removed_artist)
     waiting_list_clients = []
-    # if a booking is found on that date, the nature of the booking needs to be found
+    
     for event in events:
         summary = event.get('summary', '')
         booked_artist = summary[12:15]
@@ -711,6 +711,9 @@ def cancel_booking():
     summary = f"Tattoo with {artist}"
     client_name = input("Please provide the name of the person booked in: \n")
     date_search = input("Please enter the date of the booking (YYYY-MM-DD): \n")
+    while not date_valid(date_search):
+        print("Invalid date format. Please enter a valid date (YYYY-MM-DD).")
+        date_search = input("Please enter the date for booking (YYYY-MM-DD): \n")
     # search function for appropriate events - use of q query and search parameters adapted from 
     # https://www.jayasekara.blog/2021/07/how-to-search-google-calendar-events-using-python.html
 

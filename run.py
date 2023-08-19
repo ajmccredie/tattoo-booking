@@ -488,7 +488,6 @@ def add_to_calendar(client_details):
 
         # insert the event into the calendar
         event = bookings_calendar.events().insert(calendarId='primary', body=event).execute()
-        print('Event created: %s' % event.get('htmlLink'))
         return event
     except HttpError as error:
         print('An error occurred: %s' % error)
@@ -769,6 +768,7 @@ def cancel_booking():
                                 updated_event = add_to_calendar(replacement_client)
                                 print(f"Here are the new details for that booking: {updated_event['start']}: {updated_event['summary']}, {updated_event['description']}")
                                 print("Deleting the altered booking")
+                                
                                 bookings_calendar.events().delete(calendarId='primary', eventId=event_id).execute()
                                 print("Returning to main menu...")
                                 choose_action()
@@ -787,8 +787,7 @@ def cancel_booking():
 
 
 def main():
-    #login()
-    #obtain_calendar()
+    login()
     choose_action()
 
 # run the main programme on launch

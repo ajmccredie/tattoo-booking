@@ -212,14 +212,14 @@ def login():
         # open credentials from Config Var in Heroku
         valid_username = os.environ.get("VALID_USERNAME")
         correct_password = os.environ.get("CORRECT_PASSWORD")
-                if username == valid_username and password == correct_password:
-                    print("-----------------------------------------------------------")
-                    print("Login successful. Welcome to your booking system!")
-                    choose_action()
-                    break
-                else:
-                    print("Invalid username or password, please try again") 
-                    continue 
+        if username == valid_username and password == correct_password:
+            print("-----------------------------------------------------------")
+            print("Login successful. Welcome to your booking system!")
+            choose_action()
+             break
+        else:
+            print("Invalid username or password, please try again") 
+            continue 
 
 
 def choose_action():

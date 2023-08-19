@@ -789,8 +789,13 @@ def cancel_booking():
 
 
 def main():
-    login()
-    choose_action()
+    while True:
+        logged_in = login()
+        if logged_in:
+            choose_action()
+        else:
+            print("You are not logged in.")
 
 # run the main programme on launch
-main()
+if __name__ == '__main__':
+    main()

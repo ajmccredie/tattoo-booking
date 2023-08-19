@@ -209,11 +209,9 @@ def login():
         username = input("Please enter your username: \n")
         password = input("Please enter your password: \n")
 
-    # open the user_login secure file in 'read' and check whether
-    # credentials are accurate
-        with open("user_login.txt", "r") as file:
-            for line in file:
-                valid_username, correct_password = line.strip().split(":")
+        # open credentials from Config Var in Heroku
+        valid_username = os.environ.get("VALID_USERNAME")
+        correct_password = os.environ.get("CORRECT_PASSWORD")
                 if username == valid_username and password == correct_password:
                     print("-----------------------------------------------------------")
                     print("Login successful. Welcome to your booking system!")
@@ -791,7 +789,7 @@ def cancel_booking():
 
 
 def main():
-    #login()
+    login()
     choose_action()
 
 # run the main programme on launch

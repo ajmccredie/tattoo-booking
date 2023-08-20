@@ -24,6 +24,7 @@ I want to build a system that is easy to use by any of the employees, standardis
 The system navigates around a main menu with three distinct functions: make, view, and delete bookings. A large amount of user data is required and these inputs are validated as the system is used. 
 
 ### Logic flowcharts
+All of the flowcharts were created in lucid.app/lucidchart.
 #### The main booking menu and login logic... Each of the options is represented by a separate flow chart below:
 ![Main menu logic](/README_images/tattoo_main_booking_menu_logic.png)
 <br>

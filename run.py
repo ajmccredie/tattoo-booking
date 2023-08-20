@@ -519,7 +519,6 @@ def place_booking():
     print(f"The next available date for Kev is:  {kev_next_date}")
     print(f"The next available date for Bev is:  {bev_next_date}")
     print("-------")
-    # need to add the code here to link to the calendar and check dates
     while date_available is False:
         print("You will need to select another date for that artist to continue your booking (press 'n' to be directed to new date input)\n")
         leave_booking = input("Do you wish to return to the main menu? y/n\n")

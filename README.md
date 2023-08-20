@@ -1,8 +1,9 @@
 # Eternal Ink Tattoo Studio – Booking System
 ## Introduction
 This booking system was created as a purely Python3 based portfolio project. It uses Python3, a variety of libraries and Google API to link to a calendar to make, view and delete bookings for the two fictional artists who work at the fictional studio created for an earlier project. The system runs in the Code Institute mock terminal in Heroku.
+ ![View of deployment to Heroku mock terminal](/workspace/tattoo-booking/README_images/deployment_view.png "Heroku mock terminal view")
 
-#### View live project here: 
+#### View live project here: https://eternal-ink-tattoo-booking-c7148e7ee7d3.herokuapp.com/
 
 ## User Experience
 ### User Goals
@@ -32,15 +33,15 @@ The system navigates around a main menu with three distinct functions: make, vie
 /workspace/tattoo-booking/README_images/cancel_and_move_bookings_logic.png
 
 ### Features
-Booking – the user selects the artist and the date, but the option of ‘no preference’ for the artist is given. This allows the system to cross-reference to the date, check to see if either or both artists are free and then allocate the slot to either the free artist (or in the case of both being available, randomly selects one of them). This also returns the next date available for both artists, which may be of use if the client potentially wanted to book earlier. 
+**Booking** – the user selects the artist and the date, but the option of ‘no preference’ for the artist is given. This allows the system to cross-reference to the date, check to see if either or both artists are free and then allocate the slot to either the free artist (or in the case of both being available, randomly selects one of them). This also returns the next date available for both artists, which may be of use if the client potentially wanted to book earlier. 
 
 The booking period is limited to a 5 month window, and attempts to book appointments in the past are blocked.
 
-Viewing/searching – the next ten appointments are shown first, which allows a good overview of the upcoming days, but without being overwhelming. The system can the be searched directly by date, artist or client name. Each of these return all matching results. This could be useful for the artists to check their bookings,  or if a client makes contact to check the details of their booking. It could also be used ahead of a formal booking process to check whether the proposed dates are free.
+**Viewing/searching** – the next ten appointments are shown first, which allows a good overview of the upcoming days, but without being overwhelming. The system can the be searched directly by date, artist or client name. Each of these return all matching results. This could be useful for the artists to check their bookings,  or if a client makes contact to check the details of their booking. It could also be used ahead of a formal booking process to check whether the proposed dates are free.
 
-Deleting – the user needs to input three bits of information, all of which must match in order to find the booking before deletion. This it to prevent accidental deletion of information and bookings.
+**Deleting** – the user needs to input three bits of information, all of which must match in order to find the booking before deletion. This it to prevent accidental deletion of information and bookings.
 
- The option of bringing up the next people on the waiting list to contact and potentially fill the deleted slot is given here. Cancelled bookings cause lost revenue for tattoo studios, but having a useable waiting list should minimise these issues. Changes to bookings are confirmed.
+The option of bringing up the next people on the waiting list to contact and potentially fill the deleted slot is given here. Cancelled bookings cause lost revenue for tattoo studios, but having a useable waiting list should minimise these issues. Changes to bookings are confirmed.
 
 ## Future Features
 The ability to add staff working patterns and known holidays would make this system more useable in the real world. At the moment if a staff member wanted to prevent a booking on a day, they would have to effectively book the slot to themselves. This would mean the system would not see the day as available, however it would be time consuming and cause a general need for erroneous data entry for some of the questions.
@@ -52,55 +53,55 @@ Advanced bookings making use of the ‘length’ of the tattoos and allowing mor
 In order to not interfere with my general calendar and so that I can play with other APIs in the future, I set up a new account with Google for development activities.
 ### API Credentials:
 To enable access from the project to Google Calendar, credentials must be created and provided.
-•	Navigate to the Google Cloud Platform
-•	Click "Select a project"
-•	Select "New Project".
-•	Enter the project name.
-•	Click "Create"
-•	From the project dashboard, select "APIs and services"
-•	Then select "Library"
-•	Search for Google Drive API and enable it.
-•	Click "Create Credentials".-
-•	Click "Google Drive API" from the list.
-•	Select "Application data" from the first set of  buttons.
-•	Select "No " from the second set of buttons.
-•	Click "Done" 
-•	Enter name and description for the service account details.
-•	Select a role of "Editor" from the options available.
-•	Click "Done" to create the service account.
-•	Click on the newly created service account on the credentials page.
-•	Select "Keys" from the top menu bar.
-•	Select "Create new key" from the "Add Key" menu.
-•	Select "JSON" and click "Create"
-•	The JSON file will be downloaded to your computer. 
-•	The contents need to be copied into a creds.json file within the repository. Make sure to add this file to the .gitignore file (because it is sensitive data).
+*	Navigate to the Google Cloud Platform
+*	Click "Select a project"
+*	Select "New Project".
+*	Enter the project name.
+*	Click "Create"
+*	From the project dashboard, select "APIs and services"
+*	Then select "Library"
+*	Search for Google Drive API and enable it.
+*	Click "Create Credentials".-
+*	Click "Google Drive API" from the list.
+*	Select "Application data" from the first set of  buttons.
+*	Select "No " from the second set of buttons.
+*	Click "Done" 
+*	Enter name and description for the service account details.
+*	Select a role of "Editor" from the options available.
+*	Click "Done" to create the service account.
+*	Click on the newly created service account on the credentials page.
+*	Select "Keys" from the top menu bar.
+*	Select "Create new key" from the "Add Key" menu.
+*	Select "JSON" and click "Create"
+*	The JSON file will be downloaded to your computer. 
+*	The contents need to be copied into a creds.json file within the repository. Make sure to add this file to the .gitignore file (because it is sensitive data).
 
 ## Technologies Used
 ### Languages
 Python3
 
 ### Python Packages
-Datetime: used to return the full date by providing classes for manipulating dates and times. It is crucial for entering, tracking and displaying dates in a user-friendly format.
-Os.path: a submodule of ‘os’ in Python, used for common file and directory path manipulation. It is essential for determining whether necessary files are available for authentication and access.
-Random: a module that provides functions to generate random numbers and make random selections. It is used for when the user selects ‘no preference’ to distribute potential bookings fairly. 
-Dateutil.relativedelta relativedelta: part of the ‘dateutil’ library, which provides further extensions to ‘datetime’. This allows arithmetic operations on dates. It is specifically used to set the 5 month booking window. 
-from __future__ import print_function - Handles backwards compatibility of print statements.
+**Datetime**: used to return the full date by providing classes for manipulating dates and times. It is crucial for entering, tracking and displaying dates in a user-friendly format.<br>
+**Os.path**: a submodule of ‘os’ in Python, used for common file and directory path manipulation. It is essential for determining whether necessary files are available for authentication and access.<br>
+**Random**: a module that provides functions to generate random numbers and make random selections. It is used for when the user selects ‘no preference’ to distribute potential bookings fairly. <br>
+**Dateutil.relativedelta relativedelta**: part of the ‘dateutil’ library, which provides further extensions to ‘datetime’. This allows arithmetic operations on dates. It is specifically used to set the 5 month booking window. <br>
+**from __future__ import print_function** - Handles backwards compatibility of print statements.<br>
 
-Google API and related modules: modules used to specifically facilitate interactions with the Google Calendar: 
-- from google.auth.transport.requests import Request - Handles authentication requests and responses
-- from google.oauth2.service_account import Credentials – Represents OAuth2 credentials for a service account
-- from google_auth_oauthlib.flow import InstalledAppFlow – Helps with the OAuth2 authorisation flow
-- from googleapiclient.discovery import build – Creates a service object for interacting with Google APIs
-- from googleapiclient.errors import HttpError - Handles HTTP errors that may occur during API requests
+**Google API and related modules**: modules used to specifically facilitate interactions with the Google Calendar: 
+ - from google.auth.transport.requests import Request - Handles authentication requests and responses
+ - from google.oauth2.service_account import Credentials – Represents OAuth2 credentials for a service account
+ - from google_auth_oauthlib.flow import InstalledAppFlow – Helps with the OAuth2 authorisation flow
+ - from googleapiclient.discovery import build – Creates a service object for interacting with Google APIs
+ - from googleapiclient.errors import HttpError - Handles HTTP errors that may occur during API requests
 
 ### Frameworks, Libraries and Programmes Used:
-GitHub
-Gitpod
-Google Cloud
-Google Drive API
-Google Calendar
-Heroku
-PEP8
+* GitHub
+* Gitpod
+* Google Cloud
+* Google Drive API
+* Google Calendar
+* Heroku
+* PEP8
 
 ## Testing
 ### Functional Testing
@@ -156,6 +157,7 @@ Many small and annoying bugs were caused by minor typos and fixed fairly easily.
 7.	The sorted dates list was then not allowing both artists’ bookings to be displayed on a duplicate date. This was resolved by ensuring that events with the same date are stored as separate items in the all_events list.
 8.	There was an issue with SCOPED_CREDS when the project was deployed to Heroku (which had not been an issue when running the code in Gitpod). This was resolved in stages by changing the file name of the creds.json file and then making the CREDS and SCOPED_CREDS global variables in the code.
 9.	Issues were encountered when trying to change the date of an existing booking. The function suggested from the Google developers information did not appear to do the job required, so instead a new booking was made as replacement and the previous one deleted (which has the same over all effect, but felt like a less neat solution).
+10.	The manner in which the username and password were stored and retrieved also needed to be altered for the deployment to Heroku. These were changed from being read from a txt file to being called directly from the Config Vars in Heroku.
 
 ### Unsolved Bugs
 The link provided to confirm the booking within the window (which should lead to the google calendar) has never worked for some reason. I have conducted extensive research into available information, but this has not returned anything useable. I have removed the links from the confirmations of fresh bookings and updated bookings.

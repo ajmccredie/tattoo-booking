@@ -1,7 +1,7 @@
 # Eternal Ink Tattoo Studio – Booking System
 ## Introduction
 This booking system was created as a purely Python3 based portfolio project. It uses Python3, a variety of libraries and Google API to link to a calendar to make, view and delete bookings for the two fictional artists who work at the fictional studio created for an earlier project. The system runs in the Code Institute mock terminal in Heroku.
- ![View of deployment to Heroku mock terminal](/workspace/tattoo-booking/README_images/deployment_view.png "Heroku mock terminal view")
+![View of deployment in mock terminal in Heroku](/README_images/deployment_view.png)
 
 #### View live project here: https://eternal-ink-tattoo-booking-c7148e7ee7d3.herokuapp.com/
 
@@ -24,13 +24,16 @@ I want to build a system that is easy to use by any of the employees, standardis
 The system navigates around a main menu with three distinct functions: make, view, and delete bookings. A large amount of user data is required and these inputs are validated as the system is used. 
 
 ### Logic flowcharts
-/workspace/tattoo-booking/README_images/tattoo_main_booking_menu_logic.png
-
-/workspace/tattoo-booking/README_images/place_tattoo_booking_logic.png
-
-/workspace/tattoo-booking/README_images/search_calendar_logic.png
-
-/workspace/tattoo-booking/README_images/cancel_and_move_bookings_logic.png
+#### The main booking menu and login logic... Each of the options is represented by a separate flow chart below:
+![Main menu logic](/README_images/tattoo_main_booking_menu_logic.png)
+<br>
+#### The logic for placing a booking
+![Place booking logic](/README_images/place_tattoo_booking_logic.png)
+<br>
+#### The logic for searching the calendar
+![Search calendar logic](/README_images/search_calendar_logic.png)
+#### The logic for cancelling bookings and using the waiting list
+![Cancel booking logic](/README_images/cancel_and_move_bookings_logic.png)
 
 ### Features
 **Booking** – the user selects the artist and the date, but the option of ‘no preference’ for the artist is given. This allows the system to cross-reference to the date, check to see if either or both artists are free and then allocate the slot to either the free artist (or in the case of both being available, randomly selects one of them). This also returns the next date available for both artists, which may be of use if the client potentially wanted to book earlier. 
